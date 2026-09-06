@@ -1,0 +1,7 @@
+node_modules/
+
+# Built by the `prepare` script. npm runs `prepare` after installing from git,
+# which is what makes `npx -y github:RelayDigital/vremly-mcp` work without a
+# compiled dist/ being committed here. Do not commit dist/ — a stale checked-in
+# build would shadow the one prepare produces.
+dist/

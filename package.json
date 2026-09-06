@@ -1,0 +1,45 @@
+{
+  "name": "vremly-mcp",
+  "version": "0.1.0",
+  "description": "Model Context Protocol server for the Vremly API — lets an AI assistant discover and call any Vremly endpoint with an organization API key.",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RelayDigital/vremly-mcp.git"
+  },
+  "homepage": "https://docs.vremly.com/guides/mcp",
+  "type": "commonjs",
+  "bin": {
+    "vremly-mcp": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "openapi.json",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "vremly",
+    "real-estate",
+    "api"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "~5.7.0"
+  }
+}
