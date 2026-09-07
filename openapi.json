@@ -5470,6 +5470,146 @@
         ]
       }
     },
+    "/availability": {
+      "get": {
+        "operationId": "InternalAvailabilityController_getAvailability",
+        "parameters": [
+          {
+            "name": "startDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "technicianIds",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "duration",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "targetOrgId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get technician availability slots",
+        "tags": [
+          "Availability"
+        ]
+      }
+    },
+    "/availability/check": {
+      "get": {
+        "operationId": "InternalAvailabilityController_checkSlot",
+        "parameters": [
+          {
+            "name": "technicianId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scheduledTime",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "duration",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Check if a specific time slot is available",
+        "tags": [
+          "Availability"
+        ]
+      }
+    },
     "/media/presign": {
       "post": {
         "operationId": "MediaController_presignUpload",
@@ -5752,6 +5892,157 @@
         "summary": "Rename a media item",
         "tags": [
           "Media"
+        ]
+      }
+    },
+    "/user-availability": {
+      "get": {
+        "operationId": "AvailabilityController_getMyAvailability",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get current user availability settings",
+        "tags": [
+          "Availability"
+        ]
+      }
+    },
+    "/user-availability/status": {
+      "patch": {
+        "operationId": "AvailabilityController_updateAvailabilityStatus",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvailabilityStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Update availability status",
+        "tags": [
+          "Availability"
+        ]
+      }
+    },
+    "/user-availability/work-hours": {
+      "patch": {
+        "operationId": "AvailabilityController_updateWorkHours",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkHoursDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Update work hours for a specific day",
+        "tags": [
+          "Availability"
+        ]
+      },
+      "put": {
+        "operationId": "AvailabilityController_updateAllWorkHours",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Update all work hours at once",
+        "tags": [
+          "Availability"
         ]
       }
     },
@@ -8049,6 +8340,190 @@
         "summary": "Remove the applied coupon / discount from an invoice",
         "tags": [
           "Invoices"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/video-scripts": {
+      "get": {
+        "operationId": "VideoScriptsController_get",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "This listing's AI video scripts",
+        "tags": [
+          "listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/video-scripts/feedback": {
+      "post": {
+        "operationId": "VideoScriptsController_submitFeedback",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitVideoScriptFeedbackDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Leave feedback on this listing's video scripts",
+        "tags": [
+          "listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/video-scripts/generate": {
+      "post": {
+        "operationId": "VideoScriptsController_generate",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateVideoScriptsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Generate AI video scripts for this listing",
+        "tags": [
+          "listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/video-scripts/variations/{variationId}/select": {
+      "patch": {
+        "operationId": "VideoScriptsController_select",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "variationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Pick the script this listing will use",
+        "tags": [
+          "listings"
         ]
       }
     },
@@ -11380,6 +11855,1812 @@
         ]
       }
     },
+    "/marketplace/jobs": {
+      "post": {
+        "operationId": "MarketplaceController_createJob",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMarketplaceJobDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Create marketplace listing with service slots",
+        "tags": [
+          "Marketplace"
+        ]
+      },
+      "get": {
+        "operationId": "MarketplaceController_listJobs",
+        "parameters": [
+          {
+            "name": "locationCity",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locationRegion",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Object"
+              }
+            }
+          },
+          {
+            "name": "slotTypes",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Object"
+              }
+            }
+          },
+          {
+            "name": "budgetMinCents",
+            "required": false,
+            "in": "query",
+            "description": "Budget bounds, in cents, matched against the job's own range.\n\nSERVER-SIDE because the list is paginated. The frontend used to filter\nthese over the current page only, so a filter could empty page 1 while\nmatching jobs sat on page 2 — and the result count kept reporting the\nunfiltered total.",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "budgetMaxCents",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "`(sortBy, sortOrder)` come from `PaginationDto`, redeclared here ONLY to\nnarrow `sortBy` to the columns this list can actually order by — the base\nis an open `string`, and an unvalidated column name reaching Prisma's\n`orderBy` is not something to hand a caller.\n\n`declare` because the base already defines them; a plain redeclaration\nshadows the decorated property and silently drops its validation.\n\nSERVER-SIDE, and for a sharper reason than the filters: sorting one page of\ntwenty is not sorting. \"Highest budget\" returned the highest of whichever\ntwenty jobs the server happened to send — the wrong answer the moment a\ntwenty-first exists, and it looks right because the page IS correctly\nordered within itself.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "requestedDate",
+                "createdAt",
+                "budgetMaxCents",
+                "budgetMinCents"
+              ]
+            }
+          },
+          {
+            "name": "sortOrder",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "desc",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "createdAfter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdBefore",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "List marketplace jobs feed",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/jobs/mine": {
+      "get": {
+        "operationId": "MarketplaceController_listMyJobs",
+        "parameters": [
+          {
+            "name": "locationCity",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locationRegion",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Object"
+              }
+            }
+          },
+          {
+            "name": "slotTypes",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Object"
+              }
+            }
+          },
+          {
+            "name": "budgetMinCents",
+            "required": false,
+            "in": "query",
+            "description": "Budget bounds, in cents, matched against the job's own range.\n\nSERVER-SIDE because the list is paginated. The frontend used to filter\nthese over the current page only, so a filter could empty page 1 while\nmatching jobs sat on page 2 — and the result count kept reporting the\nunfiltered total.",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "budgetMaxCents",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "`(sortBy, sortOrder)` come from `PaginationDto`, redeclared here ONLY to\nnarrow `sortBy` to the columns this list can actually order by — the base\nis an open `string`, and an unvalidated column name reaching Prisma's\n`orderBy` is not something to hand a caller.\n\n`declare` because the base already defines them; a plain redeclaration\nshadows the decorated property and silently drops its validation.\n\nSERVER-SIDE, and for a sharper reason than the filters: sorting one page of\ntwenty is not sorting. \"Highest budget\" returned the highest of whichever\ntwenty jobs the server happened to send — the wrong answer the moment a\ntwenty-first exists, and it looks right because the page IS correctly\nordered within itself.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "requestedDate",
+                "createdAt",
+                "budgetMaxCents",
+                "budgetMinCents"
+              ]
+            }
+          },
+          {
+            "name": "sortOrder",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "desc",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "createdAfter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdBefore",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "List marketplace jobs created by current user",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/jobs/{jobId}": {
+      "get": {
+        "operationId": "MarketplaceController_getJobById",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get marketplace job details with all slots",
+        "tags": [
+          "Marketplace"
+        ]
+      },
+      "delete": {
+        "operationId": "MarketplaceController_deleteJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Delete a marketplace listing",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/jobs/list-project/{projectId}": {
+      "post": {
+        "operationId": "MarketplaceController_listProjectOnMarketplace",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "List an existing project on the marketplace",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/bids": {
+      "post": {
+        "operationId": "MarketplaceController_createBid",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMarketplaceBidDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Place or update a bid on a marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/claim": {
+      "post": {
+        "operationId": "MarketplaceController_claimSlot",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Instantly claim an open marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/threads": {
+      "get": {
+        "operationId": "MarketplaceController_listMyThreads",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Every marketplace conversation you are party to",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/jobs/{jobId}/thread/{providerUserId}": {
+      "get": {
+        "operationId": "MarketplaceController_getThread",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "providerUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "One marketplace conversation",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/jobs/{jobId}/thread/{providerUserId}/messages": {
+      "post": {
+        "operationId": "MarketplaceController_sendThreadMessage",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "providerUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMarketplaceMessageDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Post to a marketplace conversation",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/jobs/{jobId}/thread/{providerUserId}/read": {
+      "post": {
+        "operationId": "MarketplaceController_markThreadRead",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "providerUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Mark a marketplace conversation as read",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/bids/{bidId}/counter": {
+      "post": {
+        "operationId": "MarketplaceController_counterBidAsAgent",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bidId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CounterMarketplaceBidDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Agent proposes a different price on a bid",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/bids/{bidId}/counter-back": {
+      "post": {
+        "operationId": "MarketplaceController_counterBidAsProvider",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bidId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CounterMarketplaceBidDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Provider proposes a different price back",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/bids/{bidId}/accept-counter": {
+      "post": {
+        "operationId": "MarketplaceController_acceptCounterOffer",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bidId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Provider accepts the agent's counter-offer, assigning the slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/bids/{bidId}/withdraw": {
+      "post": {
+        "operationId": "MarketplaceController_withdrawBid",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bidId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Withdraw your own bid on a marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/bids/{bidId}/accept": {
+      "post": {
+        "operationId": "MarketplaceController_acceptBid",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bidId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Accept a bid on a marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/confirmation": {
+      "get": {
+        "operationId": "MarketplaceController_getBookingConfirmation",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get booking confirmation state for a slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/confirmation/confirm": {
+      "post": {
+        "operationId": "MarketplaceController_confirmBooking",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Confirm booking for a marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/confirmation/decline": {
+      "post": {
+        "operationId": "MarketplaceController_declineBooking",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeclineMarketplaceBookingConfirmationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Decline booking confirmation for a marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/deliver": {
+      "post": {
+        "operationId": "MarketplaceController_deliverSlot",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Provider delivers work for a marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/request-revision": {
+      "post": {
+        "operationId": "MarketplaceController_requestRevision",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Request revision on a delivered marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/complete": {
+      "post": {
+        "operationId": "MarketplaceController_completeSlot",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Approve and complete a marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/ratings": {
+      "post": {
+        "operationId": "MarketplaceController_createRating",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMarketplaceRatingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Create rating for a completed marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/slots/{slotId}/cancel": {
+      "post": {
+        "description": "Either side may cancel, and the consequences differ. A provider cancelling releases any escrow in full — the agent is charged nothing. An agent cancelling after the provider has started, or inside the org's cancellation window, may capture the org's configured cancellation fee as compensation. Neither side can cancel once work has been delivered; that is what revisions are for.",
+        "operationId": "MarketplaceController_cancelSlot",
+        "parameters": [
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelMarketplaceSlotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Cancel a marketplace slot",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/jobs/{jobId}/cancel": {
+      "post": {
+        "description": "Agent-side only. Cancels every slot still in play; delivered and completed slots are left alone. Each slot goes through the same cancellation as a single-slot cancel, so escrow is settled per slot. Reports which slots cancelled and which did not.",
+        "operationId": "MarketplaceController_cancelJob",
+        "parameters": [
+          {
+            "name": "jobId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelMarketplaceSlotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Cancel a whole marketplace job",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/providers": {
+      "get": {
+        "description": "The directory of people who have created a marketplace provider profile — that profile IS the opt-in, so this cannot surface a technician who never joined the marketplace. Returns USER ids, which is what `targetedProviderIds` holds. Deliberately crosses org boundaries (an agent in one org finding a provider in another is the point), so the response is an explicit allow-list of public profile fields: no email, no phone, no memberships.",
+        "operationId": "MarketplaceController_listProviders",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text match on the provider's name or headline.",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "specialties",
+            "required": false,
+            "in": "query",
+            "description": "Only providers who list at least one of these as a specialty.\n\nMatches `MarketplaceProviderProfile.specialties`, which is free text the\nprovider typed — so this is a \"says they do this\" filter, not a verified\ncapability. Named `specialties` rather than `slotTypes` for that reason:\ncalling it slot types would imply the two vocabularies are the same and\ninvite someone to filter a job's slots by it.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "verifiedOnly",
+            "required": false,
+            "in": "query",
+            "description": "Restrict to providers whose identity check has passed.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "availableOnly",
+            "required": false,
+            "in": "query",
+            "description": "Restrict to providers currently marking themselves available.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "serviceArea",
+            "required": false,
+            "in": "query",
+            "description": "Only providers whose declared service area contains this text.\n\nHeld back through Phase 3 because `MarketplaceProviderProfile.serviceArea`\nhad zero writers, and a filter over an empty column returns nothing while\nlooking like it worked. The profile wizard now writes it, so it is real.\n\nA CONTAINS MATCH, NOT AN EQUALITY, because the column is a sentence a\nprovider typed: \"Calgary and surrounding areas\" must be found by an agent\nsearching \"Calgary\". It will not find them by \"YYC\", and no amount of\nstring matching would — that is the honest cost of free text, and the\nalternative (a fixed city list) forces every provider to pick the nearest\nlie about where they actually go.\n\nSeparate from `q` on purpose. `q` asks \"anyone matching this word\"; this\nasks \"only people who cover this place\", which is a filter an agent\napplies rather than a search they run.",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "createdAfter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdBefore",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "desc",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Search marketplace providers",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/me/earnings": {
+      "get": {
+        "operationId": "MarketplaceController_getProviderEarnings",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get provider earnings summary and transaction history",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/me/provider-profile": {
+      "get": {
+        "operationId": "MarketplaceController_getMyProviderProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get current user provider profile",
+        "tags": [
+          "Marketplace"
+        ]
+      },
+      "patch": {
+        "operationId": "MarketplaceController_upsertMyProviderProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertProviderProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Update current user provider profile",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
+    "/marketplace/providers/{userId}/profile": {
+      "get": {
+        "operationId": "MarketplaceController_getProviderProfile",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get provider profile by user id",
+        "tags": [
+          "Marketplace"
+        ]
+      }
+    },
     "/api-keys": {
       "post": {
         "operationId": "ApiKeysController_create",
@@ -11492,6 +13773,516 @@
           "API Keys"
         ]
       }
+    },
+    "/listings/{slugOrToken}": {
+      "get": {
+        "operationId": "ListingsController_getListingBySlugOrToken",
+        "parameters": [
+          {
+            "name": "slugOrToken",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unbranded",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get public listing by slug or token",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/{slugOrToken}/leads": {
+      "post": {
+        "operationId": "ListingsController_createListingLead",
+        "parameters": [
+          {
+            "name": "slugOrToken",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateListingLeadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Submit a listing lead",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/status": {
+      "get": {
+        "operationId": "ListingsController_getListingStatus",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get listing status",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/publish": {
+      "patch": {
+        "operationId": "ListingsController_toggleListingPublished",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Toggle listing published state",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/details": {
+      "get": {
+        "operationId": "ListingsController_getListingDetails",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get listing details",
+        "tags": [
+          "Listings"
+        ]
+      },
+      "put": {
+        "operationId": "ListingsController_upsertListingDetails",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateListingDetailsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Upsert listing details",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/website-config": {
+      "get": {
+        "operationId": "ListingsController_getWebsiteConfig",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get property-website config",
+        "tags": [
+          "Listings"
+        ]
+      },
+      "put": {
+        "operationId": "ListingsController_upsertWebsiteConfig",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWebsiteConfigDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Upsert property-website config",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/photo-order": {
+      "patch": {
+        "operationId": "ListingsController_reorderListingPhotos",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderListingPhotosDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Arrange the listing's photo order",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/website-config/lock": {
+      "patch": {
+        "operationId": "ListingsController_setCustomerEditsLocked",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LockWebsiteConfigDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Lock or unlock customer website editing",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/analytics": {
+      "get": {
+        "operationId": "ListingsController_getListingAnalytics",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get listing analytics",
+        "tags": [
+          "Listings"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/copy": {
+      "post": {
+        "operationId": "CopywritingController_generate",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateCopyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Generate AI copy for a property website section",
+        "tags": [
+          "listings"
+        ]
+      }
     }
   },
   "info": {
@@ -11538,6 +14329,10 @@
       "description": "Service packages & add-ons"
     },
     {
+      "name": "Availability",
+      "description": "Scheduling & availability"
+    },
+    {
       "name": "Delivery",
       "description": "Project delivery & public galleries"
     },
@@ -11550,8 +14345,20 @@
       "description": "Issuing and revoking organization API keys"
     },
     {
+      "name": "Listings",
+      "description": "Property websites, listing details, photo order and leads"
+    },
+    {
+      "name": "listings",
+      "description": "AI-generated property copy and video scripts. The same /listings surface as above — the two tags differ only by case because the controllers spell them differently"
+    },
+    {
       "name": "Webhooks",
       "description": "Event subscriptions, deliveries and signature verification"
+    },
+    {
+      "name": "Marketplace",
+      "description": "Requests for quote, bids and awarded work"
     }
   ],
   "servers": [],
