@@ -61,8 +61,11 @@ function getClient(): VremlyClient {
   }
 }
 
+/** Single source for the version the host handshakes with and the banner prints. */
+const VERSION = '0.1.0';
+
 const server = new Server(
-  { name: 'vremly', version: '0.1.0' },
+  { name: 'vremly', version: VERSION },
   { capabilities: { tools: {} } },
 );
 
@@ -274,17 +277,93 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 });
 
+/**
+ * Startup banner.
+ *
+ * EVERY BYTE HERE GOES TO stderr. stdout is the MCP transport; one stray
+ * character on it desynchronises the JSON-RPC stream and the host drops the
+ * connection without a useful error.
+ *
+ * Colour is capability-gated rather than assumed. When a host captures stderr
+ * into a log file `isTTY` is false, and raw escapes would land in that log as
+ * `[36m` litter — so they are omitted. NO_COLOR is honoured by convention
+ * (no-color.org).
+ */
+const useColor = Boolean(process.stderr.isTTY) && !process.env.NO_COLOR;
+const paint = (code: string, s: string) =>
+  useColor ? `[${code}m${s}[0m` : s;
+const dim = (s: string) => paint('2', s);
+const cyan = (s: string) => paint('36', s);
+const green = (s: string) => paint('32', s);
+const yellow = (s: string) => paint('33', s);
+const bold = (s: string) => paint('1', s);
+
+const WORDMARK = [
+  '  ██╗   ██╗██████╗ ███████╗███╗   ███╗██╗  ██╗   ██╗',
+  '  ██║   ██║██╔══██╗██╔════╝████╗ ████║██║  ╚██╗ ██╔╝',
+  '  ██║   ██║██████╔╝█████╗  ██╔████╔██║██║   ╚████╔╝ ',
+  '  ╚██╗ ██╔╝██╔══██╗██╔══╝  ██║╚██╔╝██║██║    ╚██╔╝  ',
+  '   ╚████╔╝ ██║  ██║███████╗██║ ╚═╝ ██║███████╗██║   ',
+  '    ╚═══╝  ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝╚══════╝╚═╝   ',
+];
+
+/**
+ * The point of this is not decoration — it is that "started" and "usable" are
+ * different states. A server with no API key still connects happily and then
+ * fails on the first tool call, which reads to the user as the assistant being
+ * broken. Printing what was actually resolved makes that visible up front.
+ */
+function banner(): string {
+  const hasKey = Boolean(process.env.VREMLY_API_KEY);
+  const baseUrl = process.env.VREMLY_API_URL ?? 'https://api.vremly.com';
+  const readOnly = process.env.VREMLY_MCP_READ_ONLY === '1';
+
+  const ok = green('✔');
+  const warn = yellow('!');
+  const row = (mark: string, label: string, value: string) =>
+    `  ${mark} ${dim(label.padEnd(12))}${value}`;
+
+  return [
+    '',
+    ...WORDMARK.map(cyan),
+    '',
+    `  ${bold('Model Context Protocol server')}  ${dim(`v${VERSION}`)}`,
+    '',
+    row(ok, 'endpoints', `${OPERATION_COUNT} operations`),
+    row(ok, 'api', baseUrl),
+    // Presence only. The key is never echoed, not even truncated — stderr ends
+    // up in host log files that outlive the session.
+    hasKey
+      ? row(ok, 'api key', 'VREMLY_API_KEY detected')
+      : row(warn, 'api key', yellow('VREMLY_API_KEY not set — calls will fail')),
+    row(
+      ok,
+      'mode',
+      readOnly ? 'read-only (GET, HEAD, OPTIONS)' : 'read + write, limited by key scopes',
+    ),
+    row(ok, 'transport', 'stdio'),
+    '',
+    hasKey
+      ? `  ${green('Ready.')} ${dim('Ask your assistant to search the Vremly API.')}`
+      : `  ${yellow('Ready, but unauthenticated.')} ${dim('Set VREMLY_API_KEY and restart.')}`,
+    '',
+    '',
+  ].join('\n');
+}
+
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   // stderr, never stdout: stdout is the MCP transport, and anything written
   // there corrupts the protocol stream.
-  process.stderr.write(
-    `[vremly-mcp] ready — ${OPERATION_COUNT} operations from ${SPEC_PATH}\n`,
-  );
+  process.stderr.write(banner());
 }
 
 main().catch((err) => {
-  process.stderr.write(`[vremly-mcp] failed to start: ${err?.message ?? err}\n`);
+  process.stderr.write(
+    `\n  ${paint('31', '✖')} ${bold('vremly-mcp failed to start')}\n` +
+      `    ${err?.message ?? err}\n` +
+      `    ${dim(`spec: ${SPEC_PATH}`)}\n\n`,
+  );
   process.exit(1);
 });
