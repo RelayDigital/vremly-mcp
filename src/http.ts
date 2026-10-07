@@ -3,7 +3,8 @@
  *
  * ── WHAT ENFORCES SAFETY HERE ───────────────────────────────────────────────
  *
- * Not this file. The boundary is the API key: the server derives the
+ * This client keeps the API key on its configured origin and refuses redirects.
+ * Authorization is enforced by the API: the server derives the
  * organization from it (so no key can reach another org's data, however this
  * client is called) and checks the key's scopes on every route. A READ key
  * physically cannot write, whatever an agent asks for.
@@ -95,6 +96,12 @@ export class VremlyClient {
       opts.path.startsWith('/') ? opts.path : `/${opts.path}`,
       this.baseUrl,
     );
+    // The tool selects a path, never the recipient of the private API key.
+    const apiOrigin = new URL(this.baseUrl).origin;
+    if (url.origin !== apiOrigin || url.username || url.password ||
+        !['http:', 'https:'].includes(url.protocol)) {
+      throw new Error('The request path must stay on the configured API origin.');
+    }
 
     for (const [key, value] of Object.entries(opts.query ?? {})) {
       if (value === undefined || value === null) continue;
@@ -122,6 +129,7 @@ export class VremlyClient {
     try {
       response = await fetch(url, {
         method,
+        redirect: 'error', // Redirects must never forward the private API key.
         headers,
         body: payload,
         signal: controller.signal,
