@@ -74,7 +74,7 @@ export class VremlyClient {
   async request(opts: RequestOptions): Promise<RequestResult> {
     const method = opts.method.toUpperCase();
 
-    if (this.readOnly && !SAFE_METHODS.has(method)) {
+    if (this.readOnly && !SAFE_METHODS.has(method) && !(method === 'POST' && (opts.path === '/orders/prepare' || /^\/agent-migrations\/[^/]+\/reconciliation-preview$/.test(opts.path) || /^\/agent-actions\/(booking|delivery|followup)\/receipts\/[^/]+\/reconciliation-preview$/.test(opts.path) || /^\/agent-actions\/(booking\/preview|rebook\/[^/]+\/preview|(?:delivery|followup)\/[^/]+\/preview)$/.test(opts.path)))) {
       throw new Error(
         `This server is running with VREMLY_MCP_READ_ONLY=1, so ${method} is ` +
           'refused. Unset it to allow writes.',
@@ -158,9 +158,16 @@ export class VremlyClient {
     }
 
     // Surfaced because 429 is the failure an automation hits most, and the
-    // reset time is the one thing that makes it actionable.
+    // reset time is the one thing that makes it actionable. @nestjs/throttler
+    // suffixes every header with its tier name; an API key's own per-minute
+    // budget is the `apiKey` tier (apps/backend/src/config/throttle.config.ts),
+    // so the unsuffixed names alone never matched anything the API sends.
     const rateLimit: Record<string, string> = {};
     for (const header of [
+      'x-ratelimit-limit-apikey',
+      'x-ratelimit-remaining-apikey',
+      'x-ratelimit-reset-apikey',
+      'retry-after-apikey',
       'x-ratelimit-limit',
       'x-ratelimit-remaining',
       'x-ratelimit-reset',

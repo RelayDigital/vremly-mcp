@@ -4,7 +4,7 @@
  * The document has ~854 paths. That number is why this server does NOT expose
  * one MCP tool per operation: a tool list that large is unusable — it would
  * cost more context to enumerate than most tasks cost to perform, and many
- * clients cap the tool count outright. Instead three tools (search, describe,
+ * clients cap the tool count outright. Instead capability discovery and three tools (search, describe,
  * request) give complete coverage of every route at a fixed context cost.
  */
 
@@ -41,6 +41,7 @@ export interface Operation {
   requestBody?: any;
   responses?: Record<string, any>;
   security?: any[];
+  requiredScopes?: string[];
 }
 
 export interface OpenApiDocument {
@@ -59,7 +60,7 @@ export interface OpenApiDocument {
  *   1. VREMLY_OPENAPI_PATH — an explicit local file.
  *   2. openapi.json beside the package (what `npm run sync:spec` writes, and
  *      what ships in the published tarball).
- *   3. apps/backend/openapi.json — the monorepo original, so a checkout that
+ *   3. apps/backend/openapi.public.json — the monorepo original, so a checkout that
  *      has not run sync:spec still works rather than failing confusingly.
  *
  * There is deliberately no network fetch. A stdio MCP server that blocks its
@@ -82,7 +83,7 @@ export function resolveSpecPath(): string {
 
   const candidates = [
     join(__dirname, '..', 'openapi.json'),
-    join(__dirname, '..', '..', 'backend', 'openapi.json'),
+    join(__dirname, '..', '..', 'backend', 'openapi.public.json'),
   ];
 
   for (const candidate of candidates) {
@@ -136,6 +137,7 @@ export function listOperations(doc: OpenApiDocument): Operation[] {
         requestBody: op.requestBody,
         responses: op.responses,
         security: op.security,
+        requiredScopes: op['x-vremly-required-scopes'],
       });
     }
   }
@@ -238,6 +240,67 @@ export function findOperation(
 ): Operation | undefined {
   const m = method.toLowerCase();
   return listOperations(doc).find((op) => op.method === m && op.path === path);
+}
+
+/**
+ * What the API does with a body field it does not recognise. It has two
+ * answers, and saying one of them for every endpoint is how an assistant ends
+ * up either retrying a 400 it was told cannot happen or trusting a 2xx that
+ * ignored half its request.
+ */
+export const UNKNOWN_BODY_FIELD_RULE =
+  'An unknown or misspelled body field is handled one of two ways: where the ' +
+  'body is validated it is rejected with 400 and nothing changes; where it is ' +
+  'not, it is ignored and the call can still return 2xx.';
+
+/**
+ * Which half of `UNKNOWN_BODY_FIELD_RULE` applies to one operation.
+ *
+ * The API's global ValidationPipe runs `whitelist` WITH `forbidNonWhitelisted`,
+ * so a body typed as a DTO class rejects an unknown key with a 400 naming it.
+ * The document shows which bodies those are: the Swagger plugin emits a `$ref`
+ * to a component schema only for a class-typed body, and cannot describe an
+ * inline type literal or a single `@Body('key')` at all — those operations
+ * publish no requestBody, and the pipe skips them. An inline schema in between
+ * is reported as unverified rather than guessed either way.
+ *
+ * Mirrors `bodyValidationNote` in apps/backend/src/mcp/mcp-tools.service.ts
+ * (the hosted server). Two copies only because this package is published
+ * standalone and cannot import the backend; the backend's
+ * mcp-tools.service.spec.ts fails if their wording differs.
+ */
+export function bodyValidationNote(op: Operation): string {
+  if (op.method === 'get' || op.method === 'head') {
+    return (
+      'A GET carries no body. Send only the query parameters listed above: ' +
+      'depending on the route, an unlisted one is either rejected with 400 or ignored.'
+    );
+  }
+  if (!op.requestBody || typeof op.requestBody !== 'object') {
+    return (
+      'No request body is published for this operation. Either it takes none, ' +
+      'or it reads body fields the API does not validate — there an unknown or ' +
+      'misspelled field is ignored and the call can still return 2xx. Take field ' +
+      'names from the description above; never guess one.'
+    );
+  }
+  const content: Record<string, any> = op.requestBody.content ?? {};
+  const schema = (content['application/json'] ?? Object.values(content)[0])
+    ?.schema;
+  if (typeof schema?.$ref === 'string') {
+    return (
+      'This body is validated against the schema above. An unknown or ' +
+      'misspelled field is rejected with 400 ("property <name> should not ' +
+      'exist") and nothing is changed; a missing required field or a wrong type ' +
+      'is refused the same way. A property typed as a free-form object is not ' +
+      'checked inside.'
+    );
+  }
+  return (
+    'This body may not be validated, so an unknown or misspelled field is not ' +
+    'guaranteed to be rejected — it can be ignored while the call still ' +
+    'returns 2xx. Send exactly the field names above.'
+  );
 }
 
 /**
