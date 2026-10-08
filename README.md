@@ -41,32 +41,49 @@ first run.
 |---|---|---|
 | `VREMLY_API_KEY` | *(required)* | Your organization API key. |
 | `VREMLY_API_URL` | `https://api.vremly.com` | API base URL. |
-| `VREMLY_MCP_READ_ONLY` | unset | `1` refuses anything but `GET`/`HEAD`/`OPTIONS`. |
+| `VREMLY_MCP_READ_ONLY` | unset | `1` permits GET/HEAD/OPTIONS and explicitly reviewed preparation/preview POST operations only. |
 | `VREMLY_MCP_TIMEOUT_MS` | `30000` | Per-request timeout. |
 | `VREMLY_OPENAPI_PATH` | bundled | Point at a different OpenAPI document. |
 
+### Read-only sessions
+
+`VREMLY_MCP_READ_ONLY=1` also permits these reviewed POST operations, which need a request body to calculate a preview:
+
+- `/orders/prepare`
+- `/agent-actions/booking/preview`
+- `/agent-actions/rebook/{projectId}/preview`
+- `/agent-actions/delivery/{projectId}/preview`
+- `/agent-actions/followup/{projectId}/preview`
+- `/agent-migrations/{migrationId}/reconciliation-preview`
+- `/agent-actions/{booking|delivery|followup}/receipts/{receiptId}/reconciliation-preview`
+
+Other POST operations and all PUT/PATCH/DELETE operations are refused in this mode. These previews do not confirm bookings, charge payments, deliver media, send follow-up or commit migration changes. API-key scopes and organization/project authorization still apply to every permitted request.
+
 ## Tools
 
-Three, not one per endpoint:
+Four tools expose the reviewed public integration surface:
 
 | Tool | Purpose |
 |---|---|
+| `vremly_capabilities` | Inspect the connected organization and granted business permissions. |
 | `vremly_search_endpoints` | Find endpoints by keyword. |
-| `vremly_describe_endpoint` | Parameters, required body fields, responses. |
-| `vremly_request` | Call it, and return the status and body. |
+| `vremly_describe_endpoint` | Parameters, required body fields, responses and permissions. |
+| `vremly_request` | Call an endpoint and return its status and body. |
 
-The API has over a thousand operations. A tool per operation would cost more
-context to enumerate than most tasks cost to perform, and many hosts cap the
-tool count outright. Search → describe → request reaches all of them at a fixed
-cost, and because search reads the OpenAPI document directly there is no
-generated tool list to fall out of date.
-
-Describing before calling is not ceremony: the API validates with
-`whitelist: true`, so a body field it does not recognise is **silently
-dropped** rather than rejected. A request built from a guessed field name
-returns `201` having ignored the field.
+Use capabilities → search → describe → request. Describing before calling avoids guessing request fields. Validated request bodies reject unknown fields with HTTP 400; endpoints without a published body schema may ignore unknown fields. The endpoint description identifies which behavior applies.
 
 ## Permissions
+
+Version 0.2.0 adds explicit read/write grants for evaluations, team, dispatch,
+reports, project conversations, scheduling, training, inventory, permitted
+settings, payroll, workflow catalogs and saved views. For example,
+`EVALUATIONS_WRITE` allows reviewed evaluation reads and writes while retaining
+all organization role and project authorization checks. It grants no other
+domain. Existing `READ`/`WRITE` credentials do not gain these capabilities.
+Create a new key with the needed grants; updating the local package grants
+nothing. Hosted connections require explicit reauthorization to add grants.
+
+
 
 **What the assistant may do is decided by the key and enforced server-side on
 every request** — not by this process.
