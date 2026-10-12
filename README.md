@@ -92,19 +92,32 @@ every request** — not by this process.
 |---|---|
 | `READ` | `GET`, `HEAD`, `OPTIONS` |
 | `WRITE` | Everything `READ` allows, plus `POST`, `PUT`, `PATCH`, `DELETE` |
-| `ADMIN` | Everything |
+| `ADMIN` | Everything, except moving money (below) |
 | `BULK_IMPORT` | The bulk import endpoints only |
 | `WEBHOOKS` | Managing webhook subscriptions |
 
 A key belongs to one organization and the server derives the organization from
 it, so the assistant can never reach another organization's data.
 
+**No key can move money, at any scope, `ADMIN` included.** The assistant cannot
+charge a card, issue a refund or take a card-reader payment; the server refuses
+those routes to every key, and they are not in the bundled `openapi.json`. To
+get paid it sends the customer a payment link
+(`POST /invoices/{id}/send-payment-link`). If it cancels a job that is already
+paid, the job is cancelled, the invoice stays paid, and the business gets an
+email to issue the refund in Vremly. It never charges a cancellation fee.
+
 > **Give it a `READ` key unless it needs to write.** That guarantee holds even
 > if the assistant is prompt-injected by something it reads. `VREMLY_MCP_READ_ONLY=1`
 > is a convenience, **not** a security boundary — anything able to set that
 > variable could also unset it.
 
-Requests are rate limited per key: 3/second, 20/10 seconds, 100/minute.
+Requests are rate limited per key. Each key has its own per-minute budget, set
+when it was created (120 by default, 10 to 1000 allowed), counted across every
+endpoint. Some endpoints add their own cap, with burst limits of 3 per second
+and 20 per 10 seconds. A 429 names the limit hit; this server returns the
+`Retry-After-*` and `X-RateLimit-*` headers in a `rateLimit` object beside the
+body. See [Rate Limits](https://docs.vremly.com/guides/rate-limits).
 
 ## Development
 

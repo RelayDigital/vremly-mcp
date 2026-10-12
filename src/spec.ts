@@ -10,6 +10,12 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
+import {
+  AGENT_INTENTS_EXTENSION,
+  buildSearchIndex,
+  rankOperations,
+  type SearchIndex,
+} from './endpoint-search';
 
 export type HttpMethod =
   | 'get'
@@ -42,6 +48,8 @@ export interface Operation {
   responses?: Record<string, any>;
   security?: any[];
   requiredScopes?: string[];
+  /** `x-agent-intents`: how people ask for it. See endpoint-search.ts. */
+  intents?: string[];
 }
 
 export interface OpenApiDocument {
@@ -138,63 +146,14 @@ export function listOperations(doc: OpenApiDocument): Operation[] {
         responses: op.responses,
         security: op.security,
         requiredScopes: op['x-vremly-required-scopes'],
+        intents: Array.isArray(op[AGENT_INTENTS_EXTENSION])
+          ? op[AGENT_INTENTS_EXTENSION]
+          : undefined,
       });
     }
   }
 
   return operations;
-}
-
-/**
- * Score an operation against a query.
- *
- * Deliberately simple and explainable rather than fuzzy: an agent searching
- * "create a project" should get POST /projects at the top, and it should be
- * obvious why. Path segments are weighted above prose because that is what
- * callers actually search by, and an exact segment match ("projects") beats a
- * substring hit inside an unrelated word ("project-templates").
- */
-function scoreOperation(op: Operation, terms: string[]): number {
-  if (terms.length === 0) return 1;
-
-  const pathSegments = op.path
-    .toLowerCase()
-    .split(/[/{}\-_]+/)
-    .filter(Boolean);
-  const pathText = op.path.toLowerCase();
-  const summary = (op.summary ?? '').toLowerCase();
-  const description = (op.description ?? '').toLowerCase();
-  const tags = op.tags.join(' ').toLowerCase();
-  const operationId = (op.operationId ?? '').toLowerCase();
-
-  let score = 0;
-  let matchedTerms = 0;
-
-  for (const term of terms) {
-    let termScore = 0;
-
-    if (pathSegments.includes(term)) termScore += 10;
-    else if (pathText.includes(term)) termScore += 5;
-
-    if (tags.includes(term)) termScore += 4;
-    if (operationId.includes(term)) termScore += 3;
-    if (summary.includes(term)) termScore += 3;
-    if (description.includes(term)) termScore += 1;
-
-    if (termScore > 0) matchedTerms += 1;
-    score += termScore;
-  }
-
-  // Every term has to land somewhere. Without this a two-word query returns
-  // everything matching only its most common word, which for this API means
-  // "project" returns most of the surface.
-  if (matchedTerms < terms.length) return 0;
-
-  // Shorter paths are the more general, more likely-intended endpoint:
-  // /projects before /projects/{id}/media/{mediaId}/variants.
-  score += Math.max(0, 6 - pathSegments.length);
-
-  return score;
 }
 
 export interface SearchResult {
@@ -203,33 +162,43 @@ export interface SearchResult {
   summary?: string;
   tags: string[];
   operationId?: string;
+  /** The `x-agent-intents` phrase the query matched, when one did. */
+  matchedPhrase?: string;
 }
 
+/** One index per loaded document; it never changes while the server runs. */
+const indexes = new WeakMap<OpenApiDocument, SearchIndex<Operation>>();
+
+/**
+ * Rank operations for a query with the same ranking as the hosted connector
+ * (endpoint-search.ts, copied here by scripts/sync-spec.js): whole words,
+ * light stemming, rarity weighting, and the `x-agent-intents` phrases that
+ * let "where's my photographer" find the trip-tracking route.
+ */
 export function searchOperations(
   doc: OpenApiDocument,
   query: string,
   opts: { method?: string; limit?: number } = {},
 ): SearchResult[] {
-  const terms = query
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
-    .filter((t) => t.length > 1);
+  let index = indexes.get(doc);
+  if (!index) {
+    index = buildSearchIndex(listOperations(doc));
+    indexes.set(doc, index);
+  }
 
   const wantedMethod = opts.method?.toLowerCase();
   const limit = opts.limit ?? 20;
 
-  return listOperations(doc)
-    .filter((op) => !wantedMethod || op.method === wantedMethod)
-    .map((op) => ({ op, score: scoreOperation(op, terms) }))
-    .filter((entry) => entry.score > 0)
-    .sort((a, b) => b.score - a.score || a.op.path.length - b.op.path.length)
+  return rankOperations(index, query)
+    .filter(({ op }) => !wantedMethod || op.method === wantedMethod)
     .slice(0, limit)
-    .map(({ op }) => ({
+    .map(({ op, intent }) => ({
       method: op.method.toUpperCase(),
       path: op.path,
       summary: op.summary,
       tags: op.tags,
       operationId: op.operationId,
+      ...(intent ? { matchedPhrase: intent } : {}),
     }));
 }
 

@@ -366,6 +366,50 @@
         ]
       }
     },
+    "/packages/marketplace/org/{orgId}": {
+      "get": {
+        "operationId": "PackagesController_getMarketplaceCatalogue",
+        "parameters": [
+          {
+            "name": "orgId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lng",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get explicitly published marketplace catalogue",
+        "tags": [
+          "Packages"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      }
+    },
     "/packages/org/{orgId}": {
       "get": {
         "operationId": "PackagesController_getPackagesForOrg",
@@ -403,6 +447,14 @@
         "summary": "Get active packages for an organization",
         "tags": [
           "Packages"
+        ],
+        "x-agent-intents": [
+          "what packages",
+          "packages and prices",
+          "price list",
+          "pricing",
+          "services offered",
+          "what does a shoot cost"
         ],
         "x-vremly-required-scopes": [
           "READ",
@@ -2826,6 +2878,13 @@
         "tags": [
           "Invoices"
         ],
+        "x-agent-intents": [
+          "outstanding invoices",
+          "unpaid invoices",
+          "who owes me money",
+          "overdue invoices",
+          "who hasnt paid"
+        ],
         "x-vremly-required-scopes": [
           "READ",
           "ADMIN"
@@ -2887,6 +2946,16 @@
       "post": {
         "operationId": "InvoicesController_bulkAction",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkInvoiceActionDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": ""
@@ -3184,61 +3253,6 @@
         ]
       }
     },
-    "/invoices/{id}/pay-sheet": {
-      "post": {
-        "operationId": "InvoicesController_createInvoicePaymentSheet",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PayInvoiceDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "Create native PaymentSheet bundle to pay an invoice",
-        "tags": [
-          "Invoices"
-        ],
-        "x-vremly-required-scopes": [
-          "WRITE",
-          "ADMIN"
-        ]
-      }
-    },
     "/invoices/{id}/checkout-session": {
       "post": {
         "operationId": "InvoicesController_createAuthenticatedPaymentSession",
@@ -3287,6 +3301,16 @@
         "summary": "Create a hosted Checkout session to pay an invoice (authenticated)",
         "tags": [
           "Invoices"
+        ],
+        "x-agent-intents": [
+          "pay the invoice",
+          "pay my invoice",
+          "pay my bill",
+          "pay the bill",
+          "pay for the shoot",
+          "pay for my photos",
+          "pay online",
+          "settle the invoice"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -3358,6 +3382,10 @@
         "summary": "Get invoice by project ID",
         "tags": [
           "Invoices"
+        ],
+        "x-agent-intents": [
+          "invoice for this job",
+          "find the invoice for the shoot"
         ],
         "x-vremly-required-scopes": [
           "READ",
@@ -3544,6 +3572,15 @@
         "tags": [
           "Invoices"
         ],
+        "x-agent-intents": [
+          "has the invoice been paid",
+          "did they pay yet",
+          "did the client pay",
+          "payment status",
+          "pay status",
+          "is it paid",
+          "when did they pay"
+        ],
         "x-vremly-required-scopes": [
           "READ",
           "ADMIN"
@@ -3563,6 +3600,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordManualRefundDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": ""
@@ -3634,61 +3681,6 @@
         ],
         "x-vremly-required-scopes": [
           "READ",
-          "ADMIN"
-        ]
-      }
-    },
-    "/invoices/{id}/refunds": {
-      "post": {
-        "operationId": "InvoicesController_refundInvoice",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RefundInvoiceDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "Refund an invoice through Stripe",
-        "tags": [
-          "Invoices"
-        ],
-        "x-vremly-required-scopes": [
-          "WRITE",
           "ADMIN"
         ]
       }
@@ -3912,6 +3904,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayInvoiceDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": ""
@@ -3973,6 +3975,15 @@
         "summary": "Create invoice from project package",
         "tags": [
           "Invoices"
+        ],
+        "x-agent-intents": [
+          "invoice the job",
+          "invoice the client",
+          "create an invoice",
+          "make an invoice",
+          "bill the client",
+          "bill the customer",
+          "bill for the shoot"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -4340,6 +4351,11 @@
         "tags": [
           "Invoices"
         ],
+        "x-agent-intents": [
+          "send the invoice",
+          "email the invoice",
+          "resend the invoice"
+        ],
         "x-vremly-required-scopes": [
           "WRITE",
           "ADMIN"
@@ -4384,6 +4400,14 @@
         "summary": "Send the customer a payment link (email + SMS)",
         "tags": [
           "Invoices"
+        ],
+        "x-agent-intents": [
+          "send a payment link",
+          "text a link to pay",
+          "request payment",
+          "ask the client to pay",
+          "chase payment",
+          "payment reminder"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -4550,58 +4574,6 @@
         ]
       }
     },
-    "/invoices/{id}/charge": {
-      "post": {
-        "operationId": "InvoicesController_chargeInvoice",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "Charge customer card on file",
-        "tags": [
-          "Invoices"
-        ],
-        "x-vremly-required-scopes": [
-          "WRITE",
-          "ADMIN"
-        ]
-      }
-    },
     "/invoices/{id}/delta": {
       "get": {
         "operationId": "InvoicesController_getInvoiceDelta",
@@ -4647,58 +4619,6 @@
         ]
       }
     },
-    "/invoices/{id}/execute-adjustment-refund": {
-      "post": {
-        "operationId": "InvoicesController_executeAdjustmentRefund",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "Return the overpayment on a credit note",
-        "tags": [
-          "Invoices"
-        ],
-        "x-vremly-required-scopes": [
-          "WRITE",
-          "ADMIN"
-        ]
-      }
-    },
     "/invoices/{id}/record-adjustment-return": {
       "post": {
         "operationId": "InvoicesController_recordAdjustmentReturn",
@@ -4712,6 +4632,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordAdjustmentReturnDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": ""
@@ -4897,6 +4827,13 @@
         "summary": "Create a webhook subscription",
         "tags": [
           "Webhooks"
+        ],
+        "x-agent-intents": [
+          "notify me when delivered",
+          "tell me when it is done",
+          "alert me when the photos are ready",
+          "subscribe to events",
+          "webhook"
         ],
         "x-vremly-required-scopes": [
           "WEBHOOKS",
@@ -5673,6 +5610,55 @@
         ]
       }
     },
+    "/me/customer-organizations": {
+      "get": {
+        "description": "Who calls it: an agent, or their assistant with a key minted in their personal workspace (a key minted in a company workspace gets 403). Each row is a provider (orgId, orgName, paymentMode) and your customer record there (customerId). It never books or charges anything. Next step: GET /packages/org/{orgId} for that provider’s packages, then POST /orders/prepare or POST /agent-actions/booking/preview with that orgId as the provider.",
+        "operationId": "OnboardingController_getCustomerOrganizations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "List the providers you can book with as their customer; changes nothing",
+        "tags": [
+          "Onboarding"
+        ],
+        "x-agent-intents": [
+          "list my providers",
+          "my providers",
+          "providers i can book with",
+          "which photography companies can i book",
+          "media companies i work with",
+          "who do i book with",
+          "my photography company",
+          "my media company",
+          "find my provider"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      }
+    },
     "/projects": {
       "get": {
         "operationId": "ProjectsController_getProjects",
@@ -6047,6 +6033,13 @@
         "tags": [
           "Projects"
         ],
+        "x-agent-intents": [
+          "list all jobs",
+          "todays shoots",
+          "find a job",
+          "search jobs by address",
+          "search all orders"
+        ],
         "x-vremly-required-scopes": [
           "READ",
           "ADMIN"
@@ -6057,6 +6050,15 @@
       "get": {
         "operationId": "ProjectsController_getStatusCounts",
         "parameters": [
+          {
+            "name": "workspaceOnly",
+            "required": false,
+            "in": "query",
+            "description": "'true' → count only projects owned by the active workspace (x-org-id).\nFor callers whose list is `GET /projects` (findForOrg, always one\nworkspace) — the native app's Projects screen. Without it a PERSONAL\nworkspace's chips used the personal visibility scope, which also takes in\ncross-org assignments, and showed other workspaces' counts above a list\nthat could never contain them. Omitted → unchanged behaviour (the web board\nreads `/projects/mine`, whose cross-org merge these counts deliberately\nmirror; agents count across vendors).",
+            "schema": {
+              "$ref": "#/components/schemas/Object"
+            }
+          },
           {
             "name": "search",
             "required": false,
@@ -8579,6 +8581,29 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "deliveryReleased",
+            "required": false,
+            "in": "query",
+            "description": "`true` → only listings whose delivery is RELEASED: `deliveryEnabledAt`\nset and not cancelled — see `releasedMediaProjectWhere`\n(common/customer-media.ts), the `where` form of the rule that decides what\na customer may post (MediaService.releasedProfileMedia).\n\nNot `status=DELIVERED`, which this replaces for the iOS profile-post\npicker: status is not the release. Partial releases and IN_REVISION\nlistings have released media under another status, and a listing whose\ndelivery was switched off (or an AI Studio project, created DELIVERED and\nnever delivered) is DELIVERED with nothing released.\n\nOn this subclass only, like includeTotal: the other list routes keep\n400-ing it instead of accepting a filter they do not apply.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "releasedMediaTypes",
+            "required": false,
+            "in": "query",
+            "description": "Any-of media types that must be RELEASED on the listing (a customer-media\nrow of the type, the type not removed, and released by a delivery send or\nthe listing has no release rows). Implies `deliveryReleased`. Repeated\nquery items, like `status`.\n\nDeliberately not `mediaTypes`: that one matches `Project.mediaTypes`, what\nwas ORDERED (an unchecked String[] holding 'photo' and 'aerial' on live\nrows), not what was delivered.\n\nA code pattern, not @IsEnum(MediaType): orgs define CUSTOM_* types, which\nare real Media.type values. Lower case is accepted and normalised.",
+            "schema": {
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              }
+            }
           }
         ],
         "responses": {
@@ -8613,6 +8638,13 @@
         "summary": "List current user projects",
         "tags": [
           "Projects"
+        ],
+        "x-agent-intents": [
+          "list my shoots",
+          "my upcoming shoots",
+          "list my orders",
+          "find my shoot",
+          "list my bookings"
         ],
         "x-vremly-required-scopes": [
           "READ",
@@ -8765,6 +8797,11 @@
         "tags": [
           "Projects"
         ],
+        "x-agent-intents": [
+          "job history",
+          "what happened on the job",
+          "order timeline"
+        ],
         "x-vremly-required-scopes": [
           "READ",
           "ADMIN"
@@ -8869,6 +8906,15 @@
         "summary": "Get project by ID",
         "tags": [
           "Projects"
+        ],
+        "x-agent-intents": [
+          "status of my shoot",
+          "job status",
+          "order status",
+          "shoot details",
+          "is my shoot finished",
+          "when is my shoot",
+          "when will my photos be ready"
         ],
         "x-vremly-required-scopes": [
           "READ",
@@ -9174,6 +9220,7 @@
     },
     "/projects/{id}/cancel": {
       "post": {
+        "description": "Unpaid invoices on the job are cancelled. Invoices already paid by card are refunded automatically only when a person signed in to Vremly cancels; when an API key or a connected AI assistant cancels, paid invoices are left as they are and the business is emailed to review and issue the refund in Vremly.",
         "operationId": "ProjectsController_cancel",
         "parameters": [
           {
@@ -9227,6 +9274,12 @@
         "summary": "Cancel a project",
         "tags": [
           "Projects"
+        ],
+        "x-agent-intents": [
+          "cancel the job",
+          "cancel a client shoot",
+          "cancel the project",
+          "cancel it for the client"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -9372,6 +9425,7 @@
     },
     "/projects/{id}/assign-technician": {
       "patch": {
+        "description": "Puts a technician on the job (the provider side). Use GET /field-ops/projects/{projectId}/eligible-technicians or GET /projects/{id}/technician-distances to choose one. A scheduling or coverage conflict (time off, an overlapping shoot, outside their service area) returns 409; show it to the person, and only re-send with `override: true` if they confirm. Fires the PROJECT_ASSIGNED webhook.",
         "operationId": "ProjectsController_assignTechnician",
         "parameters": [
           {
@@ -9383,6 +9437,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignTechnicianDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -9415,6 +9479,19 @@
         "summary": "Assign technician to a project",
         "tags": [
           "Projects"
+        ],
+        "x-agent-intents": [
+          "assign a photographer",
+          "assign a technician",
+          "assign the shoot",
+          "put a photographer on the job",
+          "send a photographer",
+          "reassign the photographer",
+          "change the photographer",
+          "swap the photographer",
+          "dispatch a photographer",
+          "give the job to someone",
+          "reassign"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -9610,6 +9687,11 @@
         "tags": [
           "Projects"
         ],
+        "x-agent-intents": [
+          "photographers i used before",
+          "past photographers",
+          "previous photographers"
+        ],
         "x-vremly-required-scopes": [
           "READ",
           "ADMIN"
@@ -9618,6 +9700,7 @@
     },
     "/projects/{id}/agent-request-technician": {
       "patch": {
+        "description": "The customer side (the agent who booked the job). Pick `technicianId` from GET /projects/{id}/agent-past-technicians. Refused unless the caller is the project's customer and the technician worked an earlier job for them with the same provider and covers this property's area.",
         "operationId": "ProjectsController_agentRequestTechnician",
         "parameters": [
           {
@@ -9629,6 +9712,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentRequestTechnicianDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -9661,6 +9754,13 @@
         "summary": "Agent requests a different technician from past jobs",
         "tags": [
           "Projects"
+        ],
+        "x-agent-intents": [
+          "request a specific photographer",
+          "request my usual photographer",
+          "same photographer as last time",
+          "different photographer",
+          "ask for another photographer"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -9721,6 +9821,10 @@
         "summary": "Remove technician from a project",
         "tags": [
           "Projects"
+        ],
+        "x-agent-intents": [
+          "remove the photographer",
+          "unassign the photographer"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -10040,6 +10144,18 @@
         "tags": [
           "Projects"
         ],
+        "x-agent-intents": [
+          "reschedule a shoot",
+          "reschedule the job",
+          "reschedule",
+          "move the shoot",
+          "change the shoot time",
+          "change the shoot date",
+          "change the appointment",
+          "push the shoot back",
+          "set the shoot time",
+          "schedule the job"
+        ],
         "x-vremly-required-scopes": [
           "WRITE",
           "ADMIN"
@@ -10048,6 +10164,7 @@
     },
     "/projects/{id}/status": {
       "patch": {
+        "description": "Moving a project to CANCELLED runs the same cancellation as POST /projects/{id}/cancel. Unpaid invoices on the job are cancelled. Invoices already paid by card are refunded automatically only when a person signed in to Vremly cancels; when an API key or a connected AI assistant cancels, paid invoices are left as they are and the business is emailed to review and issue the refund in Vremly.",
         "operationId": "ProjectsController_updateStatus",
         "parameters": [
           {
@@ -10110,7 +10227,7 @@
     },
     "/projects/{id}/stage": {
       "patch": {
-        "description": "Use GET /pipeline/stages to find stage IDs. Applies the stage status and configured on-drop triggers.",
+        "description": "Use GET /pipeline/stages to find stage IDs. Applies the stage status and configured on-drop triggers. A stage mapped to CANCELLED runs the same cancellation as POST /projects/{id}/cancel: invoices already paid by card are refunded automatically only when a person signed in to Vremly makes the move; when an API key or a connected AI assistant does, paid invoices are left as they are and the business is emailed to review and issue the refund in Vremly.",
         "operationId": "ProjectsController_moveToStage",
         "parameters": [
           {
@@ -10979,6 +11096,15 @@
         "tags": [
           "Projects"
         ],
+        "x-agent-intents": [
+          "ask to reschedule",
+          "request a new time",
+          "request a different date",
+          "reschedule my shoot",
+          "move my shoot",
+          "add a return visit",
+          "schedule a reshoot"
+        ],
         "x-vremly-required-scopes": [
           "WRITE",
           "ADMIN"
@@ -11103,6 +11229,11 @@
         "summary": "Update a visit",
         "tags": [
           "Projects"
+        ],
+        "x-agent-intents": [
+          "change a visit time",
+          "reschedule one visit",
+          "move one visit"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -11232,6 +11363,12 @@
         "summary": "Approve or reject a visit",
         "tags": [
           "Projects"
+        ],
+        "x-agent-intents": [
+          "approve the reschedule request",
+          "accept the new time",
+          "decline the reschedule",
+          "reject the new time"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -12059,6 +12196,280 @@
         ],
         "x-vremly-required-scopes": [
           "READ",
+          "ADMIN"
+        ]
+      }
+    },
+    "/media/me/profile-post-candidates/{projectId}": {
+      "get": {
+        "operationId": "MediaController_profilePostCandidates",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "tags": [
+          "Media"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      }
+    },
+    "/media/me/profile-posts": {
+      "get": {
+        "operationId": "MediaController_myProfilePosts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "tags": [
+          "Media"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      },
+      "post": {
+        "operationId": "MediaController_createProfilePost",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfilePostDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "tags": [
+          "Media"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/media/me/profile-posts/{id}/visibility": {
+      "patch": {
+        "operationId": "MediaController_setProfilePostVisibility",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfilePostVisibilityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "tags": [
+          "Media"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/media/me/profile-posts/{id}/share": {
+      "post": {
+        "operationId": "MediaController_shareProfilePost",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareProfilePostDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "tags": [
+          "Media"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/media/me/profile-posts/{id}": {
+      "delete": {
+        "operationId": "MediaController_deleteProfilePost",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "tags": [
+          "Media"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
           "ADMIN"
         ]
       }
@@ -12936,6 +13347,271 @@
         ],
         "x-vremly-required-scopes": [
           "WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/cancellation-requests": {
+      "get": {
+        "description": "Who calls it: an owner or admin of the provider (or their assistant with a company key). Filter with status=PENDING for the ones waiting on a decision. Each row has the project (address, time, status) and the customer. Next step: show the person a pending request; they decide with POST /cancellation-requests/{id}/approve or /deny.",
+        "operationId": "CancellationRequestsController_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List customers’ requests to cancel orders in your organisation; changes nothing",
+        "tags": [
+          "cancellation-requests"
+        ],
+        "x-agent-intents": [
+          "cancellation requests",
+          "customers asking to cancel",
+          "pending cancellations",
+          "who asked to cancel"
+        ],
+        "x-vremly-required-scopes": [
+          "WORKFLOWS_READ",
+          "ADMIN"
+        ]
+      }
+    },
+    "/cancellation-requests/{id}/approve": {
+      "post": {
+        "description": "Who calls it: an owner or admin of the provider, after the person decided. Without chargeFee the job is cancelled and no money moves (status APPROVED_NO_FEE). chargeFee: true also charges chargedAmountCents to the customer’s saved card; that is only allowed from the Vremly app, so an API key gets 403 \"Charging a cancellation fee needs approval in the Vremly app\" and nothing changes. Next step: the customer is notified; the job shows CANCELLED on GET /projects/{id}.",
+        "operationId": "CancellationRequestsController_approve",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveCancellationRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Approve a customer’s cancellation request and cancel the job; an API key cannot charge a fee",
+        "tags": [
+          "cancellation-requests"
+        ],
+        "x-agent-intents": [
+          "approve the cancellation",
+          "accept the cancellation request",
+          "let the customer cancel"
+        ],
+        "x-vremly-required-scopes": [
+          "WORKFLOWS_WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/cancellation-requests/{id}/deny": {
+      "post": {
+        "description": "Who calls it: an owner or admin of the provider, after the person decided. The customer is notified with the optional note. Next step: nothing; the job keeps its schedule.",
+        "operationId": "CancellationRequestsController_deny",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DenyCancellationRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Deny a customer’s cancellation request; the job stays booked and no money moves",
+        "tags": [
+          "cancellation-requests"
+        ],
+        "x-agent-intents": [
+          "deny the cancellation",
+          "reject the cancellation request",
+          "refuse the cancellation"
+        ],
+        "x-vremly-required-scopes": [
+          "WORKFLOWS_WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/projects/{id}/tracking": {
+      "get": {
+        "operationId": "TrackingController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "visitId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get current tracking snapshot",
+        "tags": [
+          "Project tracking"
+        ],
+        "x-agent-intents": [
+          "where is my photographer",
+          "track my photographer",
+          "track the trip",
+          "trip status",
+          "photographer eta",
+          "eta",
+          "photographer on the way",
+          "when will the photographer arrive",
+          "has the photographer arrived",
+          "has the photog arrived",
+          "where is the photog",
+          "live location",
+          "photographer location",
+          "when will the photographer get here",
+          "how far away is the photographer",
+          "photographer running late"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      }
+    },
+    "/tracking/active": {
+      "get": {
+        "operationId": "TrackingBoardController_listActive",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "List active tracking rows for the org",
+        "tags": [
+          "Project tracking"
+        ],
+        "x-agent-intents": [
+          "live trip board",
+          "where is everyone",
+          "all trips on the road",
+          "who is on the road",
+          "crew locations",
+          "active trips"
+        ],
+        "x-vremly-required-scopes": [
+          "DISPATCH_READ",
           "ADMIN"
         ]
       }
@@ -15725,106 +16401,6 @@
         ]
       }
     },
-    "/customers/{id}/card-setup-intent": {
-      "post": {
-        "operationId": "CustomersController_createCardSetupIntent",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": ""
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "Start a card-capture session for a customer (staff-run)",
-        "tags": [
-          "Customers"
-        ],
-        "x-vremly-required-scopes": [
-          "WRITE",
-          "ADMIN"
-        ]
-      }
-    },
-    "/customers/{id}/card-setup-intent/confirm": {
-      "post": {
-        "operationId": "CustomersController_confirmCardSetupIntent",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConfirmStaffCardSetupDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "Confirm a staff-run card capture and make it the customer's default",
-        "tags": [
-          "Customers"
-        ],
-        "x-vremly-required-scopes": [
-          "WRITE",
-          "ADMIN"
-        ]
-      }
-    },
     "/customers/{id}/send-card-setup-link": {
       "post": {
         "operationId": "CustomersController_sendCardSetupLink",
@@ -15863,6 +16439,11 @@
         "summary": "Email the customer a link to add a card on file",
         "tags": [
           "Customers"
+        ],
+        "x-agent-intents": [
+          "ask the client to add a card",
+          "card on file link",
+          "send a card setup link"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -16302,6 +16883,7 @@
     },
     "/orders/prepare": {
       "post": {
+        "description": "Who calls it: an assistant or integration getting a booking ready. With an agent’s key (minted in their personal workspace), send `orgId` = a provider from GET /me/customer-organizations; you prepare as that provider’s customer. With a provider’s key, omit `orgId` to prepare in your own organisation (needs permission to create orders). It never creates a project, holds a slot, sends a message or charges a card. Next step: fill every `missingInputs` entry and call again until status is READY_FOR_CHECKOUT, choose `scheduledTime` from `availability.slots`, show the person the quote and slot, then book with POST /agent-actions/booking/preview and /confirm.",
         "operationId": "OrdersController_prepareBooking",
         "parameters": [],
         "requestBody": {
@@ -16323,6 +16905,7 @@
                   "type": "object",
                   "required": [
                     "organizationId",
+                    "bookingMode",
                     "status",
                     "missingInputs",
                     "questions",
@@ -16331,7 +16914,16 @@
                   ],
                   "properties": {
                     "organizationId": {
-                      "type": "string"
+                      "type": "string",
+                      "description": "The organisation the booking would be placed in: the provider."
+                    },
+                    "bookingMode": {
+                      "type": "string",
+                      "enum": [
+                        "PROVIDER",
+                        "CUSTOMER"
+                      ],
+                      "description": "PROVIDER: you book inside your own organisation for one of its customers. CUSTOMER: you book with another provider as their customer."
                     },
                     "status": {
                       "type": "string",
@@ -16498,9 +17090,27 @@
             "x-api-key": []
           }
         ],
-        "summary": "Prepare an organisation-scoped booking without creating, reserving or charging anything",
+        "summary": "Check a booking against the provider’s live catalogue, questions, price and slots; creates, reserves and charges nothing",
         "tags": [
           "Orders"
+        ],
+        "x-agent-intents": [
+          "booking",
+          "book a shoot",
+          "start a booking",
+          "check availability",
+          "available times",
+          "open time slots",
+          "earliest available time",
+          "earliest a photographer can come",
+          "when can a photographer come",
+          "when is a photographer available",
+          "what times are open",
+          "how much does a shoot cost",
+          "get a quote",
+          "quote for a shoot",
+          "prepare a booking",
+          "booking questions"
         ],
         "x-vremly-required-scopes": [
           "WORKFLOWS_READ",
@@ -16625,6 +17235,7 @@
     },
     "/orders/create": {
       "post": {
+        "description": "Who calls it: the Vremly apps, and integrations that already have the person’s approval. Assistants should prefer POST /agent-actions/booking/preview then /confirm, which show the person the exact quote and slot first. With providerOrgId you order from that provider as its customer; without it you book inside your own organisation for customerId or newCustomer (needs permission to create orders). When the provider takes payment up front the response is { requiresPayment: true, checkoutUrl } and the person pays on Stripe’s page. A card is never charged here. With an API key a card-on-file requirement comes back as cardOnFileRequired: true instead of card-collection secrets. Next step: follow GET /projects/{id}.",
         "operationId": "OrdersController_createOrder",
         "parameters": [],
         "requestBody": {
@@ -16666,7 +17277,7 @@
             "x-api-key": []
           }
         ],
-        "summary": "Create a new order",
+        "summary": "Create an order directly, with no preview step; never charges a card",
         "tags": [
           "Orders"
         ],
@@ -16899,6 +17510,7 @@
     },
     "/orders/{projectId}/cancel": {
       "delete": {
+        "description": "Who calls it: the order’s customer (an agent, or their assistant with a personal-workspace key). Providers cancel with POST /projects/{id}/cancel instead. A never-scheduled order with no technician is simply removed. Otherwise there are two paths: `path=fee` cancels now and charges the provider’s cancellation fee to the card on file; `path=request` asks the provider to approve and moves no money. With an API key (an assistant or integration) no fee is ever charged: read GET /orders/{projectId}/cancellation-policy first. When `amountCents` is 0 the fee path cancels for free; when a fee applies, the key gets 403 `{ code: \"CANCELLATION_FEE_NEEDS_APP\", feeCents, currency, requestAvailable }`, nothing is cancelled, and the person either cancels in the Vremly app or the key sends `path=request`. `confirmFeeCents` is accepted but no longer authorises a charge. Invoices already paid are not refunded by a key; the provider is emailed to refund them. Next step: on `action: \"pending_approval\"` the provider decides (webhook PROJECT_STATUS_CHANGED when it cancels); on `action: \"fee_failed\"` the card was declined or needs 3-D Secure, and the person finishes it in the Vremly app.",
         "operationId": "OrdersController_cancelOrder",
         "parameters": [
           {
@@ -16913,29 +17525,78 @@
             "name": "path",
             "required": false,
             "in": "query",
+            "description": "'fee' cancels immediately and charges the provider's cancellation fee to the card on file. 'request' asks the provider to approve the cancellation and moves no money. Omitted: a signed-in person gets 'fee' when a card is saved; an API key never gets 'fee' chosen for it unless the fee is zero.",
             "schema": {
-              "$ref": "#/components/schemas/Object"
+              "type": "string",
+              "enum": [
+                "fee",
+                "request"
+              ]
             }
           },
           {
             "name": "reason",
             "required": false,
             "in": "query",
+            "description": "Why the order is being cancelled; shown to the provider.",
             "schema": {
               "maxLength": 500,
               "type": "string"
             }
+          },
+          {
+            "name": "confirmFeeCents",
+            "required": false,
+            "in": "query",
+            "description": "Accepted for compatibility; it no longer authorises a charge. An API key never charges a cancellation fee: when one applies the call returns 403 CANCELLATION_FEE_NEEDS_APP and the person cancels in the Vremly app.",
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
-          },
           "401": {
             "description": "Missing or invalid JWT token"
           },
           "403": {
-            "description": "Not a member of the specified organization"
+            "description": "API key only: cancelling now would charge a cancellation fee, which an API key or AI assistant never does. Nothing was charged or cancelled.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CANCELLATION_FEE_NEEDS_APP"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "feeCents": {
+                      "type": "integer",
+                      "description": "The fee that would be charged now, in cents, tax included. The person pays it by cancelling in the Vremly app."
+                    },
+                    "currency": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "enum": [
+                        "standard",
+                        "late"
+                      ]
+                    },
+                    "requestAvailable": {
+                      "type": "boolean",
+                      "description": "Whether path=request (ask the provider, no charge) is available instead."
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -16952,9 +17613,19 @@
             "x-api-key": []
           }
         ],
-        "summary": "Cancel an order as customer",
+        "summary": "Cancel your own order as its customer; an API key never charges a cancellation fee",
         "tags": [
           "Orders"
+        ],
+        "x-agent-intents": [
+          "cancel",
+          "cancel my shoot",
+          "cancel my order",
+          "cancel the booking",
+          "cancel an order",
+          "call off the shoot",
+          "dont need the shoot anymore",
+          "cancel my appointment"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -16964,6 +17635,7 @@
     },
     "/orders/{projectId}/cancellation-policy": {
       "get": {
+        "description": "Who calls it: the order’s customer before cancelling (or staff who can see the job). `amountCents` is the fee in cents, tax included, that DELETE /orders/{projectId}/cancel?path=fee would charge now; `paths` says whether the fee and request paths are available. Next step for an assistant: show the person the amount and the paths; send confirmFeeCents only after they agree.",
         "operationId": "OrdersController_getCancellationPolicy",
         "parameters": [
           {
@@ -17000,9 +17672,18 @@
             "x-api-key": []
           }
         ],
-        "summary": "Get cancellation fee policy for a project",
+        "summary": "Read the cancellation fee that would apply right now, and which cancel paths exist; changes nothing",
         "tags": [
           "Orders"
+        ],
+        "x-agent-intents": [
+          "cancellation fee",
+          "cancellation policy",
+          "charged if i cancel",
+          "cost to cancel",
+          "late cancellation",
+          "cancel for free",
+          "refund if i cancel"
         ],
         "x-vremly-required-scopes": [
           "READ",
@@ -17602,6 +18283,7 @@
     },
     "/agent-actions/booking/receipts/{id}/reconciliation-preview": {
       "post": {
+        "description": "Who calls it: the assistant whose booking confirm ended uncertain (receipt status NEEDS_RECONCILIATION). Looks for the booked project in the organisation the booking was placed in (the provider, for an agent). It books nothing and charges nothing. Next step: if observedEvidence shows the booking, acknowledge it with POST /agent-actions/booking/receipts/{id}/reconcile; if not, ask the person to check their orders in the app before booking again.",
         "operationId": "AgentActionsController_bookingReconciliationPreview",
         "parameters": [
           {
@@ -17647,6 +18329,7 @@
     },
     "/agent-actions/booking/receipts/{id}/reconcile": {
       "post": {
+        "description": "Who calls it: the same assistant, after reconciliation-preview showed the booking exists. Closes the receipt; it never books again or charges anything. Next step: follow the project with GET /projects/{id}.",
         "operationId": "AgentActionsController_bookingReconcile",
         "parameters": [
           {
@@ -18099,6 +18782,7 @@
     },
     "/agent-actions/booking/receipts/{id}": {
       "get": {
+        "description": "Who calls it: the assistant that confirmed a booking (receiptId from POST /agent-actions/booking/confirm). Returns the stored result: the project, or requiresPayment with a hosted checkoutUrl. You must still be a customer of the provider (or, for a provider booking, still allowed to create orders). It changes nothing. Next step: give any checkoutUrl to the person; otherwise follow GET /projects/{id}.",
         "operationId": "AgentActionsController_bookingReceipt",
         "parameters": [
           {
@@ -18132,7 +18816,7 @@
             "x-api-key": []
           }
         ],
-        "summary": "Read your booking confirmation receipt with current customer access",
+        "summary": "Read your booking confirmation receipt; your standing with the provider is re-checked",
         "tags": [
           "Agent Actions"
         ],
@@ -18189,6 +18873,7 @@
     },
     "/agent-actions/booking/preview": {
       "post": {
+        "description": "Who calls it: an assistant booking a shoot. Agent (a key minted in the personal workspace): set order.providerOrgId to a provider from GET /me/customer-organizations; you book as that provider’s customer. Provider (a key minted in the company): omit providerOrgId and send order.customerId (GET /customers) or order.newCustomer; you need permission to create orders. Pick order.scheduledTime from availability.slots (returned by this preview and by POST /orders/prepare), or send schedulingMode: 'requested' to let the provider choose the time. It never creates a project, holds a slot, messages anyone or charges a card. When the provider needs a card on file that is missing, status is NEEDS_INPUT with missingInputs paymentMethod: the person adds the card in the app. Next step: show the person the quote and slot; only after they approve, call POST /agent-actions/booking/confirm with previewHash.",
         "operationId": "AgentActionsController_bookingPreview",
         "parameters": [],
         "requestBody": {
@@ -18223,9 +18908,38 @@
             "x-api-key": []
           }
         ],
-        "summary": "Preview the exact booking and obtain a confirmation fingerprint without creating anything",
+        "summary": "Preview the exact booking and get the fingerprint the person approves; creates, reserves and charges nothing",
         "tags": [
           "Agent Actions"
+        ],
+        "x-agent-intents": [
+          "booking",
+          "book a shoot",
+          "book a photo shoot",
+          "book a photoshoot",
+          "book a photographer",
+          "book a videographer",
+          "book photos",
+          "book photography",
+          "book listing media",
+          "schedule a shoot",
+          "schedule a photo shoot",
+          "schedule a photoshoot",
+          "schedule a photographer",
+          "order photos",
+          "order a shoot",
+          "order listing photos",
+          "listing photos",
+          "hire a photographer",
+          "set up a shoot",
+          "new booking",
+          "place an order",
+          "photos for my listing",
+          "photography for my listing",
+          "set up photography",
+          "need a photographer",
+          "need a photog",
+          "book a photog"
         ],
         "x-vremly-required-scopes": [
           "WORKFLOWS_READ",
@@ -18235,6 +18949,7 @@
     },
     "/agent-actions/booking/confirm": {
       "post": {
+        "description": "Who calls it: the assistant, only after the person approved the preview’s quote and slot. Send the same order, its previewHash, confirmed: true and a new idempotencyKey (reuse it to retry safely; a reused key returns the first result). If anything changed since the preview it returns 409 and books nothing. It runs the app’s own booking flow: the order is created and the provider is notified, or, when the provider takes payment up front, result.requiresPayment is true with result.checkoutUrl. It never charges a card and never returns card-collection secrets. Next step: give checkoutUrl to the person to pay; otherwise follow GET /projects/{id} and the PROJECT_STATUS_CHANGED, PROJECT_DELIVERED and SHARE_CARD_READY webhooks.",
         "operationId": "AgentActionsController_bookingConfirm",
         "parameters": [],
         "requestBody": {
@@ -18269,9 +18984,20 @@
             "x-api-key": []
           }
         ],
-        "summary": "Explicitly confirm a fresh booking preview; create an order or hosted payment checkout, never automatically charge a card",
+        "summary": "Book exactly what the person approved in the preview; creates the order or a hosted payment link, never charges a card",
         "tags": [
           "Agent Actions"
+        ],
+        "x-agent-intents": [
+          "confirm the booking",
+          "confirm the order",
+          "confirm the shoot",
+          "yes book it",
+          "go ahead and book it",
+          "book it",
+          "approve the quote",
+          "lock in the booking",
+          "place the booking"
         ],
         "x-vremly-required-scopes": [
           "WORKFLOWS_WRITE",
@@ -18281,6 +19007,7 @@
     },
     "/agent-actions/rebook/{projectId}/preview": {
       "post": {
+        "description": "Who calls it: an assistant booking \"the same again\". Works for an agent’s order with any provider (personal-workspace key) and for a provider’s own job. Returns the past order’s services as they are offered today (items no longer offered are listed in unavailable), the providerOrgId to book with, and, for a provider’s own job, its customerId. The address and time are blank on purpose. Next step: ask the person for the new address and time, then call POST /agent-actions/booking/preview with order.providerOrgId (agent) or order.customerId (provider).",
         "operationId": "AgentActionsController_rebook",
         "parameters": [
           {
@@ -18314,9 +19041,17 @@
             "x-api-key": []
           }
         ],
-        "summary": "Prepare current services from an accessible prior order; no booking or payment is created",
+        "summary": "Start a new booking from a past order you can see; creates, reserves and charges nothing",
         "tags": [
           "Agent Actions"
+        ],
+        "x-agent-intents": [
+          "rebook",
+          "book again",
+          "same as last time",
+          "repeat the last order",
+          "reorder",
+          "same package as last time"
         ],
         "x-vremly-required-scopes": [
           "WORKFLOWS_READ",
@@ -18373,6 +19108,14 @@
         "tags": [
           "Agent Actions"
         ],
+        "x-agent-intents": [
+          "deliver the photos",
+          "deliver the job",
+          "deliver the listing",
+          "send the photos to the client",
+          "release the media",
+          "send the gallery to the client"
+        ],
         "x-vremly-required-scopes": [
           "DELIVERY_READ",
           "ADMIN"
@@ -18427,6 +19170,10 @@
         "summary": "Explicitly confirm a fresh delivery preview with a durable duplicate-prevention receipt",
         "tags": [
           "Agent Actions"
+        ],
+        "x-agent-intents": [
+          "confirm the delivery",
+          "yes send the photos"
         ],
         "x-vremly-required-scopes": [
           "DELIVERY_WRITE",
@@ -18726,6 +19473,11 @@
         "tags": [
           "Delivery"
         ],
+        "x-agent-intents": [
+          "revision notes",
+          "client feedback",
+          "comments on the delivery"
+        ],
         "x-vremly-required-scopes": [
           "READ",
           "ADMIN"
@@ -18785,6 +19537,7 @@
     },
     "/delivery/{token}/download-request": {
       "post": {
+        "description": "Builds one zip of the delivered files: `quality` is print (the default, original files) or web (MLS-sized), and `mediaTypes` limits it to some types. Returns `status`, `artifactId` and, once READY, `cdnUrl` to download. While PENDING, poll GET /delivery/{token}/download-status/{artifactId}. The token is the project's `deliveryToken` from GET /projects/{id}.",
         "operationId": "DeliveryController_requestDownload",
         "parameters": [
           {
@@ -18814,6 +19567,16 @@
         "summary": "Request a download artifact",
         "tags": [
           "Delivery"
+        ],
+        "x-agent-intents": [
+          "download the photos",
+          "download all photos",
+          "download deliverables",
+          "download everything",
+          "zip of the photos",
+          "download the media",
+          "download for mls",
+          "high res photos"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -19128,6 +19891,13 @@
         "tags": [
           "Delivery"
         ],
+        "x-agent-intents": [
+          "approve the photos",
+          "approve the delivery",
+          "photos look good",
+          "photos look great",
+          "accept the delivery"
+        ],
         "x-vremly-required-scopes": [
           "WRITE",
           "ADMIN"
@@ -19173,6 +19943,20 @@
         "summary": "Request changes on a delivery",
         "tags": [
           "Delivery"
+        ],
+        "x-agent-intents": [
+          "request changes",
+          "request a revision",
+          "ask for a revision",
+          "ask for edits",
+          "request edits",
+          "fix the photos",
+          "fix a photo",
+          "redo the edits",
+          "photos need changes",
+          "retouch a photo",
+          "photo too dark",
+          "revision request"
         ],
         "x-vremly-required-scopes": [
           "WRITE",
@@ -19354,6 +20138,7 @@
     },
     "/delivery/{token}": {
       "get": {
+        "description": "What the delivery page shows for one order: `project`, the provider (`organization`), the delivered `media`, `downloadEnabled`, and `isPaywalled` with `invoice` when payment is outstanding. The token is the project's `deliveryToken` from GET /projects/{id}. To download every file as one zip, POST /delivery/{token}/download-request.",
         "operationId": "DeliveryController_getDeliveryByToken",
         "parameters": [
           {
@@ -19380,6 +20165,14 @@
         "summary": "Get delivery data by public token",
         "tags": [
           "Delivery"
+        ],
+        "x-agent-intents": [
+          "get my photos",
+          "see my photos",
+          "where are my photos",
+          "view the gallery",
+          "delivery gallery",
+          "delivered photos"
         ],
         "x-vremly-required-scopes": [
           "READ",
@@ -20085,6 +20878,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarketplaceServiceOrganizationDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": ""
@@ -20983,118 +21786,6 @@
         ]
       }
     },
-    "/marketplace/slots/{slotId}/cancel": {
-      "post": {
-        "description": "Either side may cancel, and the consequences differ. A provider cancelling releases any escrow in full — the agent is charged nothing. An agent cancelling after the provider has started, or inside the org's cancellation window, may capture the org's configured cancellation fee as compensation. Neither side can cancel once work has been delivered; that is what revisions are for.",
-        "operationId": "MarketplaceController_cancelSlot",
-        "parameters": [
-          {
-            "name": "slotId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CancelMarketplaceSlotDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "Cancel a marketplace slot",
-        "tags": [
-          "Marketplace"
-        ],
-        "x-vremly-required-scopes": [
-          "WRITE",
-          "ADMIN"
-        ]
-      }
-    },
-    "/marketplace/jobs/{jobId}/cancel": {
-      "post": {
-        "description": "Agent-side only. Cancels every slot still in play; delivered and completed slots are left alone. Each slot goes through the same cancellation as a single-slot cancel, so escrow is settled per slot. Reports which slots cancelled and which did not.",
-        "operationId": "MarketplaceController_cancelJob",
-        "parameters": [
-          {
-            "name": "jobId",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CancelMarketplaceSlotDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "Cancel a whole marketplace job",
-        "tags": [
-          "Marketplace"
-        ],
-        "x-vremly-required-scopes": [
-          "WRITE",
-          "ADMIN"
-        ]
-      }
-    },
     "/marketplace/providers": {
       "get": {
         "description": "The directory of people who have ENROLLED as a marketplace provider — i.e. saved their provider profile, which stamps `listedAt`. The existence of a profile row is NOT the opt-in: rows are also minted as a side effect of being rated (ratings are two-way, so agents who only hire get one) and of opening the provider tab, and those rows are excluded here, so this cannot surface a technician who never joined the marketplace. Returns USER ids, which is what `targetedProviderIds` holds. Deliberately crosses org boundaries (an agent in one org finding a provider in another is the point), so the response is an explicit allow-list of public profile fields: no email, no phone, no memberships.",
@@ -21259,6 +21950,178 @@
           }
         ],
         "summary": "Search marketplace providers",
+        "tags": [
+          "Marketplace"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      }
+    },
+    "/marketplace/matches": {
+      "get": {
+        "operationId": "MarketplaceController_matchProviders",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text match on the provider's name or headline.",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "specialties",
+            "required": false,
+            "in": "query",
+            "description": "Only providers who list at least one of these as a specialty.\n\nMatches `MarketplaceProviderProfile.specialties`, which is free text the\nprovider typed — so this is a \"says they do this\" filter, not a verified\ncapability. Named `specialties` rather than `slotTypes` for that reason:\ncalling it slot types would imply the two vocabularies are the same and\ninvite someone to filter a job's slots by it.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "verifiedOnly",
+            "required": false,
+            "in": "query",
+            "description": "Restrict to providers whose identity check has passed.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "availableOnly",
+            "required": false,
+            "in": "query",
+            "description": "Restrict to providers currently marking themselves available.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "serviceArea",
+            "required": false,
+            "in": "query",
+            "description": "Only providers whose declared service area contains this text.\n\nHeld back through Phase 3 because `MarketplaceProviderProfile.serviceArea`\nhad zero writers, and a filter over an empty column returns nothing while\nlooking like it worked. The profile wizard now writes it, so it is real.\n\nA CONTAINS MATCH, NOT AN EQUALITY, because the column is a sentence a\nprovider typed: \"Calgary and surrounding areas\" must be found by an agent\nsearching \"Calgary\". It will not find them by \"YYC\", and no amount of\nstring matching would — that is the honest cost of free text, and the\nalternative (a fixed city list) forces every provider to pick the nearest\nlie about where they actually go.\n\nSeparate from `q` on purpose. `q` asks \"anyone matching this word\"; this\nasks \"only people who cover this place\", which is a filter an agent\napplies rather than a search they run.",
+            "schema": {
+              "maxLength": 120,
+              "type": "string"
+            }
+          },
+          {
+            "name": "nearLat",
+            "required": false,
+            "in": "query",
+            "description": "THE MAP SEARCH: a city the agent picked, and a radius around it. Not saved.\n\nMatches providers whose own service circle overlaps this one, PLUS every\nprovider who works remotely — where an editor lives is not a reason to\nhide them. A provider with neither a circle nor remote work (including\nevery legacy text-only profile) is left out, but ONLY under this filter.\n\n`nearLat` and `nearLng` come together. `radiusKm` defaults to 25 with a\npoint and is ignored without one. Applied in the database, so `total` is\nexact. Independent of `serviceArea` above, which still works.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "nearLng",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "radiusKm",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 500,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "createdAfter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdBefore",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "desc",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Find opted-in providers with explainable matching reasons",
         "tags": [
           "Marketplace"
         ],
@@ -21917,20 +22780,16 @@
             }
           },
           {
-            "name": "from",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "to",
             "required": false,
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "schema": {}
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {}
           }
         ],
         "responses": {
@@ -26745,6 +27604,13 @@
         "tags": [
           "Field Ops"
         ],
+        "x-agent-intents": [
+          "who can take the job",
+          "available photographers",
+          "which photographers are free",
+          "who is free to shoot",
+          "eligible technicians"
+        ],
         "x-vremly-required-scopes": [
           "DISPATCH_READ",
           "ADMIN"
@@ -26813,6 +27679,11 @@
         "summary": "Dispatcher: rank technicians for a proposed shoot date",
         "tags": [
           "Field Ops"
+        ],
+        "x-agent-intents": [
+          "best photographer for the job",
+          "closest photographer",
+          "rank photographers"
         ],
         "x-vremly-required-scopes": [
           "DISPATCH_READ",
@@ -29944,6 +30815,67 @@
         ]
       }
     },
+    "/readiness/projects/{projectId}": {
+      "get": {
+        "operationId": "ReadinessController_getProjectReadiness",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectReadinessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "A project's reasoned delivery-readiness diagnostic — why it isn't ready, not just whether it is",
+        "tags": [
+          "Delivery"
+        ],
+        "x-agent-intents": [
+          "ready to deliver",
+          "ready for delivery",
+          "what is missing before delivery",
+          "why cant i deliver"
+        ],
+        "x-vremly-required-scopes": [
+          "DELIVERY_READ",
+          "ADMIN"
+        ]
+      }
+    },
     "/property-analytics/projects/{projectId}/reports": {
       "get": {
         "operationId": "PropertyAnalyticsController_getReports",
@@ -30155,6 +31087,491 @@
           "ADMIN"
         ]
       }
+    },
+    "/me/share-cards": {
+      "get": {
+        "operationId": "ShareCardsMeController_listMine",
+        "parameters": [
+          {
+            "name": "kind",
+            "required": false,
+            "in": "query",
+            "description": "Only cards of this kind. Phase 1 renders JUST_LISTED.",
+            "schema": {
+              "$ref": "#/components/schemas/ShareCardKind"
+            }
+          },
+          {
+            "name": "workspaceOrgId",
+            "required": false,
+            "in": "query",
+            "description": "The vendor workspace to narrow to (a company whose portal the caller is in). Omit, or pass the caller's personal org, for every vendor. A portal-bound token is always narrowed to its vendor.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Page size, 1 to 50. Default 20.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The `nextCursor` of the previous page.",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShareCardListResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "List my share cards: Just listed social post images (Instagram story, feed post, link preview) for my delivered listings",
+        "tags": [
+          "Share Cards"
+        ],
+        "x-agent-intents": [
+          "my share cards",
+          "all my social posts"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      }
+    },
+    "/me/share-cards/just-listed/{projectId}": {
+      "get": {
+        "description": "When status is PENDING the images are being drawn: wait retryAfterSeconds and ask again. Build custom designs ONLY from data and brand; never invent a number. Use links.listingUrl exactly as given — it carries the tracking that credits the post.",
+        "operationId": "ShareCardsMeController_getJustListed",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "variant",
+            "required": false,
+            "in": "query",
+            "description": "The headline. Only the values in the card's `availableVariants` are honoured; anything else returns the default variant. JUST_SOLD is offered from Phase 2.",
+            "schema": {
+              "$ref": "#/components/schemas/JustListedVariant"
+            }
+          },
+          {
+            "name": "workspaceOrgId",
+            "required": false,
+            "in": "query",
+            "description": "The vendor workspace to narrow to (a company whose portal the caller is in). Omit, or pass the caller's personal org, for every vendor. A portal-bound token is always narrowed to its vendor.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JustListedShareCardDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get my Just listed share card: social post images (Instagram story 1080x1920, feed 1080x1350, link preview) plus the listing facts to build your own",
+        "tags": [
+          "Share Cards"
+        ],
+        "x-agent-intents": [
+          "just listed post",
+          "just listed graphic",
+          "share card",
+          "send me the share card",
+          "instagram post for my listing",
+          "social media post",
+          "social media graphic",
+          "facebook post for my listing",
+          "post my listing on instagram",
+          "caption for my listing"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      }
+    },
+    "/me/share-cards/{cardId}/events": {
+      "post": {
+        "operationId": "ShareCardsMeController_recordEvent",
+        "parameters": [
+          {
+            "name": "cardId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordShareCardEventDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Recorded (a retried dedupeKey is a no-op)."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Record a share, download or copy on one of my share cards",
+        "tags": [
+          "Share Cards"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/share-cards/stats": {
+      "get": {
+        "operationId": "ShareCardsController_getStats",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "Window start, ISO 8601 (inclusive).",
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "Window end, ISO 8601 (inclusive of that day). At most 366 days after `from`.",
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ShareCardKind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShareCardOrgStatsDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Share card stats: share taps, website visits, buyer leads, booking clicks and orders from your organisation's share cards",
+        "tags": [
+          "Share Cards"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      }
+    },
+    "/share-cards/{cardId}/events": {
+      "post": {
+        "operationId": "ShareCardsController_recordEvent",
+        "parameters": [
+          {
+            "name": "cardId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordShareCardEventDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Recorded (a retried dedupeKey is a no-op)."
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Record a share, download or copy on a share card",
+        "tags": [
+          "Share Cards"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/listings/projects/{projectId}/share-cards/just-listed": {
+      "get": {
+        "description": "When status is PENDING the images are being drawn: wait retryAfterSeconds and ask again.",
+        "operationId": "ListingShareCardsController_getJustListed",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "variant",
+            "required": false,
+            "in": "query",
+            "description": "The headline. Only the values in the card's `availableVariants` are honoured; anything else returns the default variant. JUST_SOLD is offered from Phase 2.",
+            "schema": {
+              "$ref": "#/components/schemas/JustListedVariant"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JustListedShareCardDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Get a listing's Just listed share card: social post images (Instagram story 1080x1920, feed 1080x1350, link preview) plus the listing facts, from your organisation workspace",
+        "tags": [
+          "Listings"
+        ],
+        "x-agent-intents": [
+          "just listed card for a client",
+          "share card for the client",
+          "share card for the agent"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      }
+    },
+    "/delivery/{token}/share-cards/just-listed": {
+      "get": {
+        "operationId": "DeliveryShareCardsController_getJustListed",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "variant",
+            "required": false,
+            "in": "query",
+            "description": "The headline. Only the values in the card's `availableVariants` are honoured; anything else returns the default variant. JUST_SOLD is offered from Phase 2.",
+            "schema": {
+              "$ref": "#/components/schemas/JustListedVariant"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JustListedShareCardDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get the Just listed share card for a delivery: social post images (Instagram story, feed post, link preview) and a ready-to-post caption",
+        "tags": [
+          "Delivery"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      }
+    },
+    "/delivery/{token}/share-cards/{cardId}/events": {
+      "post": {
+        "operationId": "DeliveryShareCardsController_recordEvent",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cardId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordShareCardEventDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Recorded (a retried dedupeKey is a no-op)."
+          }
+        },
+        "summary": "Record a share, download or copy on a delivery's share card",
+        "tags": [
+          "Delivery"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
+          "ADMIN"
+        ]
+      }
     }
   },
   "info": {
@@ -30167,6 +31584,10 @@
     {
       "name": "App",
       "description": "Health check"
+    },
+    {
+      "name": "Onboarding",
+      "description": "User onboarding flow"
     },
     {
       "name": "Organizations",
@@ -30730,7 +32151,11 @@
           },
           "accountType": {
             "type": "object",
-            "description": "User-facing intent for the account.\nOnly AGENT and PROVIDER are user-facing in the UI."
+            "description": "User-facing intent for the account.\nOnly AGENT and PROVIDER are user-facing in the UI.",
+            "enum": [
+              "AGENT",
+              "PROVIDER"
+            ]
           },
           "companyAccessCode": {
             "type": "string",
@@ -30751,7 +32176,11 @@
             "type": "string"
           },
           "accountType": {
-            "type": "object"
+            "type": "object",
+            "enum": [
+              "AGENT",
+              "PROVIDER"
+            ]
           },
           "name": {
             "type": "string"
@@ -30797,7 +32226,11 @@
             "minLength": 8
           },
           "accountType": {
-            "type": "object"
+            "type": "object",
+            "enum": [
+              "AGENT",
+              "PROVIDER"
+            ]
           },
           "inviteCode": {
             "type": "string"
@@ -30829,7 +32262,11 @@
         "type": "object",
         "properties": {
           "accountType": {
-            "type": "object"
+            "type": "object",
+            "enum": [
+              "AGENT",
+              "PROVIDER"
+            ]
           },
           "useCases": {
             "type": "array",
@@ -30874,13 +32311,17 @@
           },
           "purpose": {
             "type": "object",
-            "description": "Purpose the code is issued for. Scopes how it can later be redeemed:\n'signup' (default) rejects already-registered emails; 'login_2fa',\n'password_reset' and 'returning_customer_setup' allow them. A code minted\nfor one purpose cannot be redeemed by another flow.",
+            "description": "Purpose the code is issued for. Scopes how it can later be redeemed:\n'signup' (default) refuses an address that belongs to an account with 409\n`code: 'EMAIL_ALREADY_REGISTERED'` (auth/signup-email-status.ts); 'login_2fa',\n'password_reset' and 'returning_customer_setup' allow them. A code minted\nfor one purpose cannot be redeemed by another flow.",
             "enum": [
               "signup",
               "login_2fa",
               "password_reset",
               "returning_customer_setup"
             ]
+          },
+          "turnstileToken": {
+            "type": "string",
+            "description": "Cloudflare Turnstile widget token (common/turnstile.ts). Optional field\nso the route keeps working before a frontend widget sends one — the\nverify call is a no-op until TURNSTILE_SECRET_KEY is configured, so an\nabsent token is never itself a rejection reason while that's true."
           }
         },
         "required": [
@@ -31592,6 +33033,10 @@
       "CreatePackageDto": {
         "type": "object",
         "properties": {
+          "marketplaceVisible": {
+            "type": "boolean",
+            "description": "Explicitly offer this item in the marketplace. Defaults to false; independent of booking-portal visibility."
+          },
           "name": {
             "type": "string",
             "maxLength": 160,
@@ -31749,6 +33194,10 @@
       "UpdatePackageDto": {
         "type": "object",
         "properties": {
+          "marketplaceVisible": {
+            "type": "boolean",
+            "description": "Explicitly offer this item in the marketplace. Defaults to false; independent of booking-portal visibility."
+          },
           "name": {
             "type": "string",
             "maxLength": 160,
@@ -31905,6 +33354,10 @@
       "CreateAddOnDto": {
         "type": "object",
         "properties": {
+          "marketplaceVisible": {
+            "type": "boolean",
+            "description": "Explicitly offer this item in the marketplace. Defaults to false; independent of booking-portal visibility."
+          },
           "name": {
             "type": "string",
             "maxLength": 160,
@@ -32072,6 +33525,10 @@
       "UpdateAddOnDto": {
         "type": "object",
         "properties": {
+          "marketplaceVisible": {
+            "type": "boolean",
+            "description": "Explicitly offer this item in the marketplace. Defaults to false; independent of booking-portal visibility."
+          },
           "name": {
             "type": "string",
             "maxLength": 160,
@@ -32749,6 +34206,32 @@
           }
         }
       },
+      "BulkInvoiceActionDto": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "send",
+              "remind",
+              "void"
+            ],
+            "description": "send: email each invoice to its customer. remind: email it again; a DRAFT is refused because it was never sent. void: void each invoice that is not PAID or VOID."
+          },
+          "invoiceIds": {
+            "minItems": 1,
+            "description": "Invoice ids in the authenticated organization. Ids from any other organization are skipped and counted in `skipped`.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "action",
+          "invoiceIds"
+        ]
+      },
       "PayInvoiceDto": {
         "type": "object",
         "properties": {
@@ -32762,6 +34245,39 @@
             "minimum": 0
           }
         }
+      },
+      "RecordManualRefundDto": {
+        "type": "object",
+        "properties": {
+          "amountCents": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Amount refunded, in cents of the invoice currency. Must be positive and no more than the invoice total less earlier refunds.",
+            "example": 12500
+          },
+          "refundedAt": {
+            "type": "string",
+            "description": "When the money was handed back (ISO 8601).",
+            "example": "2026-10-12T15:00:00.000Z"
+          },
+          "method": {
+            "type": "string",
+            "description": "How it was refunded. The app offers cheque, cash, bank-transfer, interac and other.",
+            "example": "cheque"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why the refund was given."
+          },
+          "note": {
+            "type": "string",
+            "description": "Internal note for the audit record."
+          }
+        },
+        "required": [
+          "amountCents",
+          "refundedAt"
+        ]
       },
       "RefundInvoiceDto": {
         "type": "object",
@@ -32975,6 +34491,39 @@
           "paymentMethod"
         ]
       },
+      "ChargeInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "applyLoyaltyCredits": {
+            "type": "boolean",
+            "description": "Redeem the billed customer's loyalty credits against this invoice before charging the card."
+          },
+          "paymentMethodId": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "The customer's saved Stripe payment method to charge (an id from GET /invoices/{id}/payment-methods). Omit it to charge the first card on file.",
+            "example": "pm_1Q2w3E4r5T6y7U8i"
+          }
+        }
+      },
+      "RecordAdjustmentReturnDto": {
+        "type": "object",
+        "properties": {
+          "amountCents": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Amount returned by hand, in cents of the credit note currency. Must be positive and no more than what is still outstanding on the note.",
+            "example": 2500
+          },
+          "note": {
+            "type": "string",
+            "description": "How and when it was returned."
+          }
+        },
+        "required": [
+          "amountCents"
+        ]
+      },
       "ApplyDiscountDto": {
         "type": "object",
         "properties": {
@@ -32993,37 +34542,59 @@
         "type": "object",
         "properties": {}
       },
+      "WebhookEventType": {
+        "type": "string",
+        "enum": [
+          "PROJECT_CREATED",
+          "PROJECT_STATUS_CHANGED",
+          "PROJECT_ASSIGNED",
+          "PROJECT_DELIVERED",
+          "DELIVERY_APPROVED",
+          "INVOICE_CREATED",
+          "INVOICE_SENT",
+          "INVOICE_PAID",
+          "INVOICE_VOIDED",
+          "CUSTOMER_CREATED",
+          "CUSTOMER_UPDATED",
+          "SHARE_CARD_READY",
+          "PROJECT_RESCHEDULED",
+          "TRIP_STATUS_CHANGED"
+        ],
+        "description": "The events to deliver to url. Each delivery is a signed POST of { id, event, timestamp, data }, where data is that event's payload. PROJECT_STATUS_CHANGED, PROJECT_DELIVERED, PROJECT_RESCHEDULED, TRIP_STATUS_CHANGED and PROJECT_ASSIGNED follow a shoot; SHARE_CARD_READY is sent to the personal workspace of the agent whose Just listed card is ready; INVOICE_SENT and INVOICE_PAID follow billing."
+      },
       "CreateWebhookSubscriptionDto": {
         "type": "object",
         "properties": {
+          "events": {
+            "type": "array",
+            "description": "The events to deliver to url. Each delivery is a signed POST of { id, event, timestamp, data }, where data is that event's payload. PROJECT_STATUS_CHANGED, PROJECT_DELIVERED, PROJECT_RESCHEDULED, TRIP_STATUS_CHANGED and PROJECT_ASSIGNED follow a shoot; SHARE_CARD_READY is sent to the personal workspace of the agent whose Just listed card is ready; INVOICE_SENT and INVOICE_PAID follow billing.",
+            "items": {
+              "$ref": "#/components/schemas/WebhookEventType"
+            }
+          },
           "url": {
             "type": "string",
             "format": "uri"
-          },
-          "events": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
           }
         },
         "required": [
-          "url",
-          "events"
+          "events",
+          "url"
         ]
       },
       "UpdateWebhookSubscriptionDto": {
         "type": "object",
         "properties": {
+          "events": {
+            "type": "array",
+            "description": "Replaces the subscribed events. Same values as on create.",
+            "items": {
+              "$ref": "#/components/schemas/WebhookEventType"
+            }
+          },
           "url": {
             "type": "string",
             "format": "uri"
-          },
-          "events": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
           },
           "isActive": {
             "type": "boolean"
@@ -33285,6 +34856,23 @@
           }
         }
       },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "minLength": 1
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 8
+          }
+        },
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ]
+      },
       "RecordDetectedTimezoneDto": {
         "type": "object",
         "properties": {
@@ -33421,7 +35009,14 @@
         "type": "object",
         "properties": {
           "accountType": {
-            "type": "object"
+            "type": "object",
+            "enum": [
+              "AGENT",
+              "PROVIDER"
+            ]
+          },
+          "enterpriseSetup": {
+            "type": "boolean"
           },
           "companyName": {
             "type": "string",
@@ -33907,6 +35502,40 @@
         },
         "required": [
           "projectIds"
+        ]
+      },
+      "AssignTechnicianDto": {
+        "type": "object",
+        "properties": {
+          "technicianId": {
+            "type": "string",
+            "description": "The user id of the technician to put on the job. They must be an enabled service provider in this organization.",
+            "example": "cmk3x9q2a0001s601abcd1234"
+          },
+          "override": {
+            "type": "boolean",
+            "description": "Confirm the assignment despite a conflict (409) reported by a previous call. Ignored unless the caller may override assignments."
+          },
+          "bulkBatchId": {
+            "type": "string",
+            "description": "Bulk-assign rollup id. Pass the same value on every call in one bulk action so the technician is notified once for the batch. Omit it for a single assignment."
+          }
+        },
+        "required": [
+          "technicianId"
+        ]
+      },
+      "AgentRequestTechnicianDto": {
+        "type": "object",
+        "properties": {
+          "technicianId": {
+            "type": "string",
+            "description": "The technician to request. Must be one returned by GET /projects/{id}/agent-past-technicians.",
+            "example": "cmk3x9q2a0001s601abcd1234"
+          }
+        },
+        "required": [
+          "technicianId"
         ]
       },
       "BulkSetEditorsDto": {
@@ -34693,6 +36322,77 @@
           "content"
         ]
       },
+      "ProfilePostDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "mediaIds": {
+            "minItems": 1,
+            "maxItems": 30,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "visibility": {
+            "type": "object",
+            "enum": [
+              "PRIVATE",
+              "PUBLIC"
+            ]
+          }
+        },
+        "required": [
+          "projectId",
+          "title",
+          "mediaIds"
+        ]
+      },
+      "ProfilePostVisibilityDto": {
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "type": "object",
+            "enum": [
+              "PRIVATE",
+              "PUBLIC"
+            ]
+          }
+        },
+        "required": [
+          "visibility"
+        ]
+      },
+      "ShareProfilePostDto": {
+        "type": "object",
+        "properties": {
+          "targetProjectId": {
+            "type": "string"
+          },
+          "mediaIds": {
+            "minItems": 1,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 4000
+          }
+        },
+        "required": [
+          "targetProjectId",
+          "mediaIds"
+        ]
+      },
       "PresignUploadDto": {
         "type": "object",
         "properties": {
@@ -35463,6 +37163,19 @@
               "technician",
               "viewer"
             ]
+          },
+          "bundleId": {
+            "type": "string",
+            "description": "Bundle.main.bundleIdentifier of the app registering the token, e.g.\n\"com.vremly.agent\" or \"com.vremly.virtualxposure\". Picks the APNs auth key\nand decides tenant-app org scoping (notifications/tenant-bundle-scope.ts).",
+            "maxLength": 200
+          },
+          "environment": {
+            "type": "object",
+            "description": "The APNs gateway that issued the token: \"sandbox\" for a Debug-signed build\n(aps-environment=development), \"production\" for TestFlight / App Store.",
+            "enum": [
+              "sandbox",
+              "production"
+            ]
           }
         },
         "required": [
@@ -35477,6 +37190,19 @@
           "pushToStartToken": {
             "type": "string",
             "minLength": 1
+          },
+          "bundleId": {
+            "type": "string",
+            "description": "Bundle.main.bundleIdentifier of the app registering the token, e.g.\n\"com.vremly.agent\" or \"com.vremly.virtualxposure\". Picks the APNs auth key\nand decides tenant-app org scoping (notifications/tenant-bundle-scope.ts).",
+            "maxLength": 200
+          },
+          "environment": {
+            "type": "object",
+            "description": "The APNs gateway that issued the token: \"sandbox\" for a Debug-signed build\n(aps-environment=development), \"production\" for TestFlight / App Store.",
+            "enum": [
+              "sandbox",
+              "production"
+            ]
           }
         },
         "required": [
@@ -35511,6 +37237,15 @@
       "CreateInquiryDto": {
         "type": "object",
         "properties": {
+          "proposedDateTime": {
+            "type": "string",
+            "description": "A requested time, never a confirmed booking or availability reservation.",
+            "maxLength": 40
+          },
+          "requestedTechnicianId": {
+            "type": "string",
+            "maxLength": 64
+          },
           "orgId": {
             "type": "string",
             "description": "The org the lead is FOR — the company whose public mini-site the form sits\non. Required: every read of a lead (the org's /leads inbox, iOS, the\nportal) is scoped by `Inquiry.orgId`, so a lead written without one is\nstored and then never shown to anybody. It must name an org the public\nmini-site would render (`findPublicOrgOrThrow`); anything else is a 404,\nnot a write.",
@@ -35790,9 +37525,32 @@
             "nullable": true,
             "description": "The percentage a charge would actually take right now: 0 when exempt, otherwise the effective rate including any per-org override. Measured through computePlatformFeeCents, so it cannot disagree with what Stripe takes. Always a number on the wire; null is reserved for clients modelling \"not loaded yet\"."
           },
+          "teamsTransactionFeePct": {
+            "type": "number",
+            "description": "The per-transaction rate this org would pay on Teams while its payments run through Vremly — what a Teams offer must quote it. A non-zero staff fee override when one is set (it wins over the Teams rate when the charge is taken), otherwise the Teams list rate, 1.5. Computed by the same function the charge uses, so the quote cannot disagree with it. Prefer this over the public price list's transactionFeePct, which knows no org."
+          },
+          "teamsTrialDays": {
+            "type": "number",
+            "nullable": true,
+            "description": "The default free trial this workspace would get by starting Teams on the yearly interval — 14 (days) — or null: once it has used its one trial (owner decision 2026-10-10, \"One per workspace\": a Stripe trial, a staff trial grant or the old company signup trial), and whenever a stored trial end date decides instead (see teamsTrialEndsAt). Read off the function Teams checkout passes to Stripe, so an offer that reads this cannot promise a trial the checkout will not give. Monthly never has a default trial."
+          },
+          "teamsTrialEndsAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time",
+            "description": "A trial already promised (a running staff grant) that Teams checkout carries over to Stripe as its trial end, on either interval — \"free until this date\". Null when there is none; then teamsTrialDays says whether the yearly default applies."
+          },
+          "teamsPurchaseMovesPayments": {
+            "type": "boolean",
+            "description": "True when buying Teams would move this org's payments off its own Stripe account onto its Vremly payout (Connect) account, where the Teams transaction fee is collected (owner decision 2026-10-10, \"Back to Connect at 1.5%\"). Every Teams offer discloses it before checkout."
+          },
           "canUseOwnStripeAccount": {
             "type": "boolean",
-            "description": "True when this org may install its own Stripe credentials and switch its payments off Stripe Connect — a paid-tier privilege (Teams, Enterprise, Founder, or a staff override). Clients MUST gate the \"bring your own Stripe account\" control on this rather than on transactionFeePct === 0: a paid org that has not switched over yet still pays the percentage, so deriving it from the fee hides the control from precisely the org that needs it. Pair the two — this one answers \"may you leave Connect\", transactionFeePct answers \"have you\"."
+            "description": "True when this org may install its own Stripe credentials and switch its payments off Stripe Connect — a paid-tier privilege (legacy Teams, Enterprise, Founder, or a staff override). False for a Teams org on the current price list that is not already on its own Stripe: its payments stay on Connect at 1.5% until monthly fee invoicing exists. Clients MUST gate the \"bring your own Stripe account\" control on this rather than on transactionFeePct. Pair it with usesOwnStripeAccount — this one answers \"may you leave Connect\", that one answers \"have you\"."
+          },
+          "usesOwnStripeAccount": {
+            "type": "boolean",
+            "description": "True when this org's payments settle on its own Stripe account — the stored stripeStandaloneMode flag. Clients MUST read where the money goes from this, never from transactionFeePct === 0: a Teams org on Connect pays 1.5%, and a standalone org whose plan lapsed pays the list rate while its money still settles on its own account."
           },
           "features": {
             "description": "One { granted, limit? } per gated feature — the union of the plan grants and any active add-on SKU subscriptions. Clients gate the UI on these so a Free org is shown an upgrade path instead of a button that 403s. Gate on `granted`, never on which SKU was sold: SKUs are repriced and rebundled, entitlement keys are not.",
@@ -35808,7 +37566,12 @@
           "isEnterprise",
           "subscriptionActive",
           "transactionFeePct",
+          "teamsTransactionFeePct",
+          "teamsTrialDays",
+          "teamsTrialEndsAt",
+          "teamsPurchaseMovesPayments",
           "canUseOwnStripeAccount",
+          "usesOwnStripeAccount",
           "features"
         ]
       },
@@ -36401,6 +38164,63 @@
           "isAvailable"
         ]
       },
+      "DayOfWeek": {
+        "type": "string",
+        "enum": [
+          "MONDAY",
+          "TUESDAY",
+          "WEDNESDAY",
+          "THURSDAY",
+          "FRIDAY",
+          "SATURDAY",
+          "SUNDAY"
+        ]
+      },
+      "MemberWorkHoursDayDto": {
+        "type": "object",
+        "properties": {
+          "dayOfWeek": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DayOfWeek"
+              }
+            ]
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "startTime": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          },
+          "endTime": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+          }
+        },
+        "required": [
+          "dayOfWeek",
+          "isEnabled",
+          "startTime",
+          "endTime"
+        ]
+      },
+      "UpdateMemberWorkHoursDto": {
+        "type": "object",
+        "properties": {
+          "hours": {
+            "uniqueItems": true,
+            "maxItems": 7,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberWorkHoursDayDto"
+            }
+          }
+        },
+        "required": [
+          "hours"
+        ]
+      },
       "UpdateMemberServiceProviderDto": {
         "type": "object",
         "properties": {
@@ -36938,6 +38758,341 @@
           }
         }
       },
+      "OrgSplashLogosDto": {
+        "type": "object",
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "lightUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "PNG drawn on the light-mode splash, or null when unset."
+          },
+          "darkUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "PNG drawn on the dark-mode splash, or null when unset."
+          },
+          "lightBackground": {
+            "type": "string",
+            "example": "#FFFFFF",
+            "description": "#RRGGBB. The light-mode splash background baked into the company's app: the latest non-rejected app request splash colour, else #FFFFFF."
+          },
+          "darkBackground": {
+            "type": "string",
+            "example": "#0A0A0A",
+            "description": "Always #0A0A0A — the dark-mode splash of every branded app."
+          }
+        },
+        "required": [
+          "orgId",
+          "lightUrl",
+          "darkUrl",
+          "lightBackground",
+          "darkBackground"
+        ]
+      },
+      "CreateSplashLogoUploadDto": {
+        "type": "object",
+        "properties": {
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/webp"
+            ],
+            "description": "Content-Type the browser will PUT with. The presigned URL is bound to it."
+          }
+        },
+        "required": [
+          "contentType"
+        ]
+      },
+      "SplashLogoUploadTicketDto": {
+        "type": "object",
+        "properties": {
+          "uploadId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Server-minted id of the staged upload. Echo it to PUT /organizations/:orgId/splash-logos/:appearance."
+          },
+          "uploadUrl": {
+            "type": "string",
+            "description": "Presigned S3 PUT URL. The request Content-Type must equal `contentType`."
+          },
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/webp"
+            ]
+          },
+          "maxBytes": {
+            "type": "number",
+            "example": 5242880,
+            "description": "Largest file the commit will accept, in bytes."
+          }
+        },
+        "required": [
+          "uploadId",
+          "uploadUrl",
+          "contentType",
+          "maxBytes"
+        ]
+      },
+      "CommitSplashLogoDto": {
+        "type": "object",
+        "properties": {
+          "uploadId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The `uploadId` from the upload ticket."
+          }
+        },
+        "required": [
+          "uploadId"
+        ]
+      },
+      "UploadedSplashLogoDto": {
+        "type": "object",
+        "properties": {
+          "appearance": {
+            "enum": [
+              "light",
+              "dark"
+            ],
+            "type": "string"
+          },
+          "width": {
+            "type": "number",
+            "description": "Published PNG width in pixels."
+          },
+          "height": {
+            "type": "number",
+            "description": "Published PNG height in pixels."
+          },
+          "hasTransparency": {
+            "type": "boolean",
+            "description": "False when every pixel is opaque — the logo will show as a box on the splash."
+          }
+        },
+        "required": [
+          "appearance",
+          "width",
+          "height",
+          "hasTransparency"
+        ]
+      },
+      "CommitSplashLogoResponseDto": {
+        "type": "object",
+        "properties": {
+          "logos": {
+            "$ref": "#/components/schemas/OrgSplashLogosDto"
+          },
+          "uploaded": {
+            "$ref": "#/components/schemas/UploadedSplashLogoDto"
+          }
+        },
+        "required": [
+          "logos",
+          "uploaded"
+        ]
+      },
+      "PublicOrgSplashLogosDto": {
+        "type": "object",
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "lightUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "darkUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "orgId",
+          "lightUrl",
+          "darkUrl"
+        ]
+      },
+      "CreateWelcomePhotoUploadDto": {
+        "type": "object",
+        "properties": {
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ],
+            "description": "Content-Type the browser will PUT with. The presigned URL is bound to it."
+          }
+        },
+        "required": [
+          "contentType"
+        ]
+      },
+      "WelcomePhotoUploadTicketDto": {
+        "type": "object",
+        "properties": {
+          "uploadId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Server-minted id of the staged upload. Echo it to POST /organizations/:orgId/welcome-screen/photos."
+          },
+          "uploadUrl": {
+            "type": "string",
+            "description": "Presigned S3 PUT URL. The request Content-Type must equal `contentType`."
+          },
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          },
+          "maxBytes": {
+            "type": "number",
+            "example": 15728640,
+            "description": "Largest file the commit will accept, in bytes."
+          }
+        },
+        "required": [
+          "uploadId",
+          "uploadUrl",
+          "contentType",
+          "maxBytes"
+        ]
+      },
+      "CommitWelcomePhotoDto": {
+        "type": "object",
+        "properties": {
+          "uploadId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The `uploadId` from the upload ticket."
+          }
+        },
+        "required": [
+          "uploadId"
+        ]
+      },
+      "WelcomePhotoDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Public URL of the published JPEG. Put it in welcomeScreen.slides[].imageUrl and save the settings; until then nothing shows it."
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "CreateWelcomeVideoUploadDto": {
+        "type": "object",
+        "properties": {
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "video/mp4",
+              "video/quicktime"
+            ],
+            "description": "Content-Type the browser will PUT with (MP4 or MOV). The presigned URL is bound to it; the server re-checks the bytes at commit time."
+          }
+        },
+        "required": [
+          "contentType"
+        ]
+      },
+      "WelcomeVideoUploadTicketDto": {
+        "type": "object",
+        "properties": {
+          "uploadId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Server-minted id of the staged upload. Echo it to POST /organizations/:orgId/welcome-screen/videos."
+          },
+          "uploadUrl": {
+            "type": "string",
+            "description": "Presigned S3 PUT URL. The request Content-Type must equal `contentType`."
+          },
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "video/mp4",
+              "video/quicktime"
+            ]
+          },
+          "maxBytes": {
+            "type": "number",
+            "example": 104857600,
+            "description": "Largest file the commit will accept, in bytes (100 MB)."
+          }
+        },
+        "required": [
+          "uploadId",
+          "uploadUrl",
+          "contentType",
+          "maxBytes"
+        ]
+      },
+      "CommitWelcomeVideoDto": {
+        "type": "object",
+        "properties": {
+          "uploadId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The `uploadId` from the upload ticket."
+          }
+        },
+        "required": [
+          "uploadId"
+        ]
+      },
+      "WelcomeVideoDto": {
+        "type": "object",
+        "properties": {
+          "videoUrl": {
+            "type": "string",
+            "description": "Public URL of the published MP4 (H.264, no audio track, long side ≤ 1920 px, ≤ 30 fps, at most the first 15 s of the upload). Put it in welcomeScreen.slides[].videoUrl and save the settings; until then nothing shows it."
+          },
+          "posterUrl": {
+            "type": "string",
+            "description": "Public URL of the video's poster frame (JPEG, metadata stripped). Put it in the SAME slide's imageUrl — a slide with a videoUrl must have one."
+          },
+          "durationMs": {
+            "type": "number",
+            "example": 15000,
+            "description": "Duration of the published video in milliseconds."
+          },
+          "width": {
+            "type": "number",
+            "example": 1080,
+            "description": "Published video width in px."
+          },
+          "height": {
+            "type": "number",
+            "example": 1920,
+            "description": "Published video height in px."
+          }
+        },
+        "required": [
+          "videoUrl",
+          "posterUrl",
+          "durationMs",
+          "width",
+          "height"
+        ]
+      },
       "MigrateReturningCustomersDto": {
         "type": "object",
         "properties": {
@@ -37388,7 +39543,7 @@
           },
           "orgId": {
             "type": "string",
-            "description": "Must match the authenticated organisation; otherwise omit."
+            "description": "The provider to book with. Omit it to book in the authenticated organisation (a provider booking for one of its customers; needs permission to create orders). Set it to another organisation to book as that provider’s customer: you must be a linked customer of it (GET /me/customer-organizations lists them), otherwise 403."
           },
           "when": {
             "type": "string",
@@ -37431,6 +39586,41 @@
         "required": [
           "name"
         ]
+      },
+      "OrderAttributionDto": {
+        "type": "object",
+        "properties": {
+          "utmSource": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "utmMedium": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "utmCampaign": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "utmTerm": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "utmContent": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "referrerHost": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "The referring host only (example.com), never a full URL."
+          },
+          "landingPath": {
+            "type": "string",
+            "maxLength": 512,
+            "description": "The landing page path. A query string is dropped on the server."
+          }
+        }
       },
       "CreatePublicOrderDto": {
         "type": "object",
@@ -37559,6 +39749,14 @@
           },
           "schedulingContact": {
             "$ref": "#/components/schemas/SchedulingContactDto"
+          },
+          "attribution": {
+            "description": "Where the booker came from, as the booking page captured it (UTMs,\nreferrer host, landing path) — share card attribution, spec §8. Optional;\nstored once per order, best-effort. See OrderAttributionDto.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderAttributionDto"
+              }
+            ]
           }
         },
         "required": [
@@ -37849,6 +40047,14 @@
           },
           "schedulingContact": {
             "$ref": "#/components/schemas/SchedulingContactDto"
+          },
+          "attribution": {
+            "description": "Where the booker came from, as the booking page captured it (UTMs,\nreferrer host, landing path) — share card attribution, spec §8. Optional;\nstored once per order, best-effort. See OrderAttributionDto.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderAttributionDto"
+              }
+            ]
           }
         },
         "required": [
@@ -38501,7 +40707,7 @@
           },
           "confirmed": {
             "type": "boolean",
-            "description": "Explicit approval to release media and notify the existing project customers."
+            "description": "Explicit approval to release media and notify the existing project customers. Must be the JSON literal true; a string such as \"true\" or \"false\" is a 400."
           }
         },
         "required": [
@@ -38514,7 +40720,12 @@
         "type": "object",
         "properties": {
           "order": {
-            "$ref": "#/components/schemas/CreateOrderDto"
+            "description": "The booking. order.providerOrgId names the provider you book with as its customer (an agent); omit it to book inside your own organisation for order.customerId or order.newCustomer (a provider). Booking with another organisation needs a customer relationship with it.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateOrderDto"
+              }
+            ]
           }
         },
         "required": [
@@ -38525,7 +40736,12 @@
         "type": "object",
         "properties": {
           "order": {
-            "$ref": "#/components/schemas/CreateOrderDto"
+            "description": "The booking. order.providerOrgId names the provider you book with as its customer (an agent); omit it to book inside your own organisation for order.customerId or order.newCustomer (a provider). Booking with another organisation needs a customer relationship with it.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateOrderDto"
+              }
+            ]
           },
           "previewHash": {
             "type": "string",
@@ -38537,7 +40753,7 @@
           },
           "confirmed": {
             "type": "boolean",
-            "description": "Explicit approval of the exact preview, including creation and provider notification effects."
+            "description": "Explicit approval of the exact preview, including creation and provider notification effects. Send true only after the person approved the quote and slot. Must be the JSON literal true; a string such as \"true\" or \"false\" is a 400."
           }
         },
         "required": [
@@ -39818,7 +42034,8 @@
             "maxLength": 8
           },
           "locationLat": {
-            "type": "number"
+            "type": "number",
+            "description": "The job's pin, STORED as sent on `MarketplaceJob` (and a proximity hint\nfor the project a filled slot creates). Range-checked like every other\nmarketplace coordinate (`@IsLatitude`/`@IsLongitude`, as on\n`PurchaseMarketplaceListingDto`): latitude 98.58 is a number, and a bare\n`@IsNumber()` stored it."
           },
           "locationLng": {
             "type": "number"
@@ -39855,6 +42072,17 @@
           "etaHours": {
             "type": "number",
             "minimum": 0
+          },
+          "providerOrgId": {
+            "type": "string"
+          }
+        }
+      },
+      "MarketplaceServiceOrganizationDto": {
+        "type": "object",
+        "properties": {
+          "providerOrgId": {
+            "type": "string"
           }
         }
       },
@@ -40213,6 +42441,10 @@
       "UpsertProviderProfileDto": {
         "type": "object",
         "properties": {
+          "discoverable": {
+            "type": "boolean",
+            "description": "Explicit directory consent. Omitted preserves the existing choice; new profiles stay private."
+          },
           "headline": {
             "type": "string",
             "maxLength": 200
@@ -40280,6 +42512,18 @@
             "type": "boolean"
           }
         }
+      },
+      "ApplicationDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "ProposalDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "RelationshipResponseDto": {
+        "type": "object",
+        "properties": {}
       },
       "CreateApiKeyDto": {
         "type": "object",
@@ -45090,6 +47334,83 @@
           "status"
         ]
       },
+      "ActivateOfferDto": {
+        "type": "object",
+        "properties": {
+          "orgId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "orgId"
+        ]
+      },
+      "CreateOfferDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "creditAmountCents": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "imageUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "activeFrom": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "title",
+          "creditAmountCents"
+        ]
+      },
+      "UpdateOfferDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "creditAmountCents": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "imageUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "activeFrom": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          }
+        }
+      },
       "CreatePipelineStageDto": {
         "type": "object",
         "properties": {
@@ -45356,11 +47677,35 @@
           }
         }
       },
+      "SetDemoPresenterDto": {
+        "type": "object",
+        "properties": {}
+      },
       "SetOrgFeeExemptDto": {
         "type": "object",
         "properties": {}
       },
       "SetOrgFeePctDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "MintDemoSessionDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "SwitchDemoSessionDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "DemoPassDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateDemoLinkDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "OpenDemoLinkDto": {
         "type": "object",
         "properties": {}
       },
@@ -48679,6 +51024,76 @@
           "assigneeUserId"
         ]
       },
+      "ReadinessBlockerDto": {
+        "type": "object",
+        "properties": {
+          "mediaType": {
+            "type": "string",
+            "description": "MediaType value or an org-defined custom code"
+          },
+          "reason": {
+            "enum": [
+              "NOT_UPLOADED",
+              "PROCESSING",
+              "FAILED",
+              "AWAITING_CAPTURE",
+              "AWAITING_QC",
+              "UNKNOWN"
+            ],
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "relatedJobId": {
+            "type": "string"
+          },
+          "suggestedAction": {
+            "enum": [
+              "RETRY_JOB",
+              "AWAIT_CAPTURE",
+              "REQUEST_HUMAN_QC",
+              "NONE"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "mediaType",
+          "reason",
+          "detail",
+          "suggestedAction"
+        ]
+      },
+      "ProjectReadinessResponseDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "isReady": {
+            "type": "boolean"
+          },
+          "readyToDeliverAt": {
+            "type": "string"
+          },
+          "isAwaitingFinalRelease": {
+            "type": "boolean"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadinessBlockerDto"
+            }
+          }
+        },
+        "required": [
+          "projectId",
+          "isReady",
+          "isAwaitingFinalRelease",
+          "blockers"
+        ]
+      },
       "ToggleAnalyticsSubscriptionDto": {
         "type": "object",
         "properties": {
@@ -50195,6 +52610,902 @@
         "required": [
           "attempted",
           "property"
+        ]
+      },
+      "ShareCardKind": {
+        "type": "string",
+        "enum": [
+          "JUST_LISTED",
+          "DELIVERED",
+          "RECAP_AGENT",
+          "RECAP_PROVIDER",
+          "PROFILE"
+        ]
+      },
+      "ShareCardStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "READY",
+          "WITHHELD",
+          "FAILED"
+        ]
+      },
+      "ShareCardWithheldReason": {
+        "type": "string",
+        "enum": [
+          "NOT_DELIVERED",
+          "PAYMENT_OUTSTANDING",
+          "NO_COVER",
+          "CANCELLED",
+          "SUBJECT_REMOVED",
+          "NOT_ENOUGH_ACTIVITY",
+          "NO_PUBLIC_POSTS"
+        ]
+      },
+      "ShareCardImageDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Public, immutable CDN URL."
+          },
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "contentType": {
+            "type": "string",
+            "example": "image/jpeg"
+          }
+        },
+        "required": [
+          "url",
+          "width",
+          "height",
+          "contentType"
+        ]
+      },
+      "ShareCardImagesDto": {
+        "type": "object",
+        "properties": {
+          "story": {
+            "description": "Instagram story, 1080×1920.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardImageDto"
+              }
+            ]
+          },
+          "feed": {
+            "description": "Feed post, 1080×1350.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardImageDto"
+              }
+            ]
+          },
+          "linkPreview": {
+            "description": "Link preview, 1200×630.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardImageDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "story",
+          "feed",
+          "linkPreview"
+        ]
+      },
+      "ShareCardSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardKind"
+              }
+            ]
+          },
+          "variant": {
+            "type": "string",
+            "description": "For JUST_LISTED, a JustListedVariant."
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardStatus"
+              }
+            ]
+          },
+          "withheldReason": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardWithheldReason"
+              }
+            ]
+          },
+          "isSample": {
+            "type": "boolean"
+          },
+          "projectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "The listing address line."
+          },
+          "images": {
+            "nullable": true,
+            "description": "Null unless status is READY.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardImagesDto"
+              }
+            ]
+          },
+          "apiPath": {
+            "type": "string",
+            "nullable": true,
+            "description": "The API path that returns the full card (data, caption, links)."
+          },
+          "renderedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "variant",
+          "status",
+          "withheldReason",
+          "isSample",
+          "projectId",
+          "addressLabel",
+          "images",
+          "apiPath",
+          "renderedAt",
+          "createdAt"
+        ]
+      },
+      "ShareCardListResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShareCardSummaryDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true,
+            "description": "Pass as `cursor` for the next page; null on the last page."
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "JustListedVariant": {
+        "type": "string",
+        "enum": [
+          "JUST_LISTED",
+          "COMING_SOON",
+          "FOR_RENT",
+          "JUST_SOLD"
+        ]
+      },
+      "ShareCardAddressDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The display line, unit first (\"707-11826 100 Avenue NW\")."
+          },
+          "line1": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "label",
+          "line1",
+          "unit",
+          "city",
+          "region",
+          "postalCode",
+          "countryCode"
+        ]
+      },
+      "ShareCardAreaDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "description": "Whole square feet."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "SQ_FT"
+            ]
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "RMS",
+              "MEASURED",
+              "LISTED"
+            ],
+            "description": "RMS: measured by a scan under the Alberta RMS standard. MEASURED: measured by a scan under another standard. LISTED: typed into the listing facts."
+          }
+        },
+        "required": [
+          "value",
+          "unit",
+          "basis"
+        ]
+      },
+      "ShareCardFactsDto": {
+        "type": "object",
+        "properties": {
+          "beds": {
+            "type": "number",
+            "nullable": true
+          },
+          "baths": {
+            "type": "number",
+            "nullable": true
+          },
+          "area": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardAreaDto"
+              }
+            ]
+          },
+          "priceCents": {
+            "type": "number",
+            "nullable": true,
+            "description": "List price in cents."
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "listingType": {
+            "type": "string",
+            "nullable": true,
+            "description": "SALE or RENT."
+          },
+          "propertyType": {
+            "type": "string",
+            "nullable": true
+          },
+          "mlsNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "beds",
+          "baths",
+          "area",
+          "priceCents",
+          "currency",
+          "listingType",
+          "propertyType",
+          "mlsNumber"
+        ]
+      },
+      "ShareCardDatesDto": {
+        "type": "object",
+        "properties": {
+          "deliveredAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "mlsLiveDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "soldDate": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "deliveredAt",
+          "mlsLiveDate",
+          "soldDate"
+        ]
+      },
+      "ShareCardMediaDto": {
+        "type": "object",
+        "properties": {
+          "mediaId": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "aspectRatio": {
+            "type": "number",
+            "nullable": true
+          },
+          "isVideoPoster": {
+            "type": "boolean",
+            "description": "The image is a video poster frame."
+          }
+        },
+        "required": [
+          "mediaId",
+          "url",
+          "aspectRatio",
+          "isVideoPoster"
+        ]
+      },
+      "ShareCardAgentDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "photoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "brokerageName": {
+            "type": "string",
+            "nullable": true
+          },
+          "brokerageLogoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "name",
+          "photoUrl",
+          "brokerageName",
+          "brokerageLogoUrl",
+          "phone",
+          "email"
+        ]
+      },
+      "ShareCardContactDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "brokerageName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "phone",
+          "brokerageName"
+        ]
+      },
+      "JustListedShareCardDataDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "canonicalAddressId": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/ShareCardAddressDto"
+          },
+          "facts": {
+            "$ref": "#/components/schemas/ShareCardFactsDto"
+          },
+          "dates": {
+            "$ref": "#/components/schemas/ShareCardDatesDto"
+          },
+          "hero": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardMediaDto"
+              }
+            ]
+          },
+          "gallery": {
+            "description": "Up to 10 delivered photos in website gallery order — source material for your own designs.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShareCardMediaDto"
+            }
+          },
+          "agent": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardAgentDto"
+              }
+            ]
+          },
+          "additionalContacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShareCardContactDto"
+            }
+          }
+        },
+        "required": [
+          "projectId",
+          "canonicalAddressId",
+          "address",
+          "facts",
+          "dates",
+          "hero",
+          "gallery",
+          "agent",
+          "additionalContacts"
+        ]
+      },
+      "ProviderCreditDto": {
+        "type": "object",
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "logoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "logoOnDarkUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "The logo drawn on a dark panel."
+          },
+          "creditLabel": {
+            "type": "string",
+            "example": "Photos by Acme Media"
+          },
+          "bookingUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "The provider's public booking page with tracking. Null when the credit is text only."
+          }
+        },
+        "required": [
+          "orgId",
+          "name",
+          "logoUrl",
+          "logoOnDarkUrl",
+          "creditLabel",
+          "bookingUrl"
+        ]
+      },
+      "PlatformCreditDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "Made with Vremly"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "url"
+        ]
+      },
+      "ShareCardBrandDto": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProviderCreditDto"
+              }
+            ]
+          },
+          "platform": {
+            "nullable": true,
+            "description": "Null for white-label organisations. Include it only when it is not null.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlatformCreditDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "provider",
+          "platform"
+        ]
+      },
+      "ShareCardLinksDto": {
+        "type": "object",
+        "properties": {
+          "listingUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "The property website with tracking. Use it exactly as given. Null when the website is not live."
+          }
+        },
+        "required": [
+          "listingUrl"
+        ]
+      },
+      "ShareCardStatsDto": {
+        "type": "object",
+        "properties": {
+          "shares": {
+            "type": "number",
+            "description": "Shares, downloads and Instagram story shares."
+          },
+          "websiteVisits": {
+            "type": "number",
+            "description": "Property website visits that came from this card."
+          },
+          "leads": {
+            "type": "number",
+            "description": "Buyer leads whose first or last visit came from this card."
+          },
+          "bookings": {
+            "type": "number",
+            "description": "Orders placed from this card's credit link."
+          }
+        },
+        "required": [
+          "shares",
+          "websiteVisits",
+          "leads",
+          "bookings"
+        ]
+      },
+      "JustListedShareCardDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardKind"
+              }
+            ]
+          },
+          "variant": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/JustListedVariant"
+              }
+            ]
+          },
+          "availableVariants": {
+            "type": "array",
+            "description": "The headlines the listing's stored data supports.",
+            "items": {
+              "$ref": "#/components/schemas/JustListedVariant"
+            }
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardStatus"
+              }
+            ]
+          },
+          "withheldReason": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardWithheldReason"
+              }
+            ]
+          },
+          "retryAfterSeconds": {
+            "type": "number",
+            "nullable": true,
+            "description": "When PENDING: ask again after this many seconds."
+          },
+          "isSample": {
+            "type": "boolean",
+            "description": "Demo data: the images carry a SAMPLE ribbon."
+          },
+          "images": {
+            "nullable": true,
+            "description": "Null unless status is READY.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardImagesDto"
+              }
+            ]
+          },
+          "altText": {
+            "type": "string",
+            "nullable": true
+          },
+          "caption": {
+            "type": "string",
+            "nullable": true,
+            "description": "A ready-to-post caption with the tracked website link."
+          },
+          "data": {
+            "nullable": true,
+            "description": "Every fact the card was built from. Null when the card is withheld.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/JustListedShareCardDataDto"
+              }
+            ]
+          },
+          "brand": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardBrandDto"
+              }
+            ]
+          },
+          "links": {
+            "$ref": "#/components/schemas/ShareCardLinksDto"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/ShareCardStatsDto"
+          },
+          "contentHash": {
+            "type": "string",
+            "nullable": true,
+            "description": "sha256 of what the images show."
+          },
+          "templateVersion": {
+            "type": "number"
+          },
+          "renderedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "variant",
+          "availableVariants",
+          "status",
+          "withheldReason",
+          "retryAfterSeconds",
+          "isSample",
+          "images",
+          "altText",
+          "caption",
+          "data",
+          "brand",
+          "links",
+          "stats",
+          "contentHash",
+          "templateVersion",
+          "renderedAt",
+          "generatedAt"
+        ]
+      },
+      "ShareCardEventAction": {
+        "type": "string",
+        "enum": [
+          "VIEWED",
+          "SHARED",
+          "DOWNLOADED",
+          "LINK_COPIED",
+          "CAPTION_COPIED",
+          "INSTAGRAM_STORY"
+        ],
+        "description": "SHARED (native share completed), DOWNLOADED, LINK_COPIED, CAPTION_COPIED, INSTAGRAM_STORY (iOS direct story share) or VIEWED."
+      },
+      "ShareCardEventSize": {
+        "type": "string",
+        "enum": [
+          "STORY",
+          "FEED",
+          "LINK_PREVIEW"
+        ],
+        "description": "Which image the action was on, when it was on one."
+      },
+      "ShareCardSurface": {
+        "type": "string",
+        "enum": [
+          "WEB",
+          "IOS",
+          "DELIVERY_PAGE"
+        ],
+        "description": "Where the action happened: WEB, IOS or DELIVERY_PAGE."
+      },
+      "RecordShareCardEventDto": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "description": "SHARED (native share completed), DOWNLOADED, LINK_COPIED, CAPTION_COPIED, INSTAGRAM_STORY (iOS direct story share) or VIEWED.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardEventAction"
+              }
+            ]
+          },
+          "size": {
+            "description": "Which image the action was on, when it was on one.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardEventSize"
+              }
+            ]
+          },
+          "surface": {
+            "description": "Where the action happened: WEB, IOS or DELIVERY_PAGE.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardSurface"
+              }
+            ]
+          },
+          "dedupeKey": {
+            "type": "string",
+            "format": "uuid",
+            "description": "A UUID v4 the client generates once per action and reuses on retry, so a retried request is not counted twice."
+          }
+        },
+        "required": [
+          "action",
+          "surface",
+          "dedupeKey"
+        ]
+      },
+      "ShareCardKindStatsDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShareCardKind"
+              }
+            ]
+          },
+          "cardsReady": {
+            "type": "number",
+            "description": "Cards that reached READY in the window."
+          },
+          "shareTaps": {
+            "type": "number",
+            "description": "Shares, downloads and Instagram story shares."
+          },
+          "websiteVisits": {
+            "type": "number"
+          },
+          "leads": {
+            "type": "number"
+          },
+          "creditClicks": {
+            "type": "number",
+            "description": "Booking page views from provider credit links."
+          },
+          "attributedBookings": {
+            "type": "number",
+            "description": "Non-cancelled orders attributed to a card."
+          }
+        },
+        "required": [
+          "kind",
+          "cardsReady",
+          "shareTaps",
+          "websiteVisits",
+          "leads",
+          "creditClicks",
+          "attributedBookings"
+        ]
+      },
+      "ShareCardOrgStatsDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "byKind": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShareCardKindStatsDto"
+            }
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "byKind"
         ]
       }
     }

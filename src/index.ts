@@ -85,7 +85,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           query: {
             type: 'string',
             description:
-              'Keywords, e.g. "create project", "webhook subscription", "invoice pdf". All terms must match.',
+              'What the person wants, in their words or the API\'s, e.g. "book a shoot", "where is my photographer", "invoice pdf".',
           },
           method: {
             type: 'string',
@@ -198,8 +198,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         });
         if (results.length === 0) {
           return textResult(
-            `No endpoint matched "${args.query}". Every term must match, so try ` +
-              'fewer or more general words — "webhook" rather than "webhook subscription secret".',
+            `No endpoint matched "${args.query}". Try the words a person would ` +
+              'use ("book a shoot", "pay invoice") or one broad word such as "project", "invoice" or "webhook".',
           );
         }
         return textResult({ count: results.length, results });

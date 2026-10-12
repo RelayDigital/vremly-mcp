@@ -161,13 +161,20 @@ export class VremlyClient {
     // reset time is the one thing that makes it actionable. @nestjs/throttler
     // suffixes every header with its tier name; an API key's own per-minute
     // budget is the `apiKey` tier (apps/backend/src/config/throttle.config.ts),
-    // so the unsuffixed names alone never matched anything the API sends.
+    // so the unsuffixed names alone never matched anything the API sends. A
+    // route with its own cap (ThrottlePerMinute / RouteThrottle) binds a key on
+    // the `long` tier plus the `medium` and `short` burst tiers, and a 429
+    // from that cap says `Retry-After-long` (or `-medium`, `-short`), never
+    // `Retry-After-apiKey`.
     const rateLimit: Record<string, string> = {};
     for (const header of [
       'x-ratelimit-limit-apikey',
       'x-ratelimit-remaining-apikey',
       'x-ratelimit-reset-apikey',
       'retry-after-apikey',
+      'retry-after-long',
+      'retry-after-medium',
+      'retry-after-short',
       'x-ratelimit-limit',
       'x-ratelimit-remaining',
       'x-ratelimit-reset',
