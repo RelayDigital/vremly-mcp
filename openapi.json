@@ -441,7 +441,17 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get active packages for an organization",
@@ -493,7 +503,17 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get active add-ons for an organization",
@@ -7752,6 +7772,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachScanResultsDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "",
@@ -8810,6 +8840,7 @@
     },
     "/projects/create": {
       "post": {
+        "description": "A connected AI assistant is refused (403 AGENT_BOOKING_NEEDS_PREVIEW): creating a priced job, and optionally invoicing the customer, is a booking, so it books with POST /agent-actions/booking/preview (order.customerId or order.newCustomer) and then POST /agent-actions/booking/confirm, which shows the person the quote first and applies their spending limit.",
         "operationId": "ProjectsController_createProject",
         "parameters": [],
         "requestBody": {
@@ -9186,6 +9217,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProjectNotesDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -9442,7 +9483,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AssignTechnicianDto"
+                "$ref": "#/components/schemas/AssignTechnicianBodyDto"
               }
             }
           }
@@ -9557,6 +9598,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignCustomerBodyDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -9609,6 +9660,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignProjectManagerBodyDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -9717,7 +9778,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AgentRequestTechnicianDto"
+                "$ref": "#/components/schemas/RequestTechnicianDto"
               }
             }
           }
@@ -9965,6 +10026,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignEditorBodyDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -10164,7 +10235,7 @@
     },
     "/projects/{id}/status": {
       "patch": {
-        "description": "Moving a project to CANCELLED runs the same cancellation as POST /projects/{id}/cancel. Unpaid invoices on the job are cancelled. Invoices already paid by card are refunded automatically only when a person signed in to Vremly cancels; when an API key or a connected AI assistant cancels, paid invoices are left as they are and the business is emailed to review and issue the refund in Vremly.",
+        "description": "Moving a project to CANCELLED runs the same cancellation as POST /projects/{id}/cancel. Unpaid invoices on the job are cancelled. Invoices already paid by card are refunded automatically only when a person signed in to Vremly cancels; when an API key or a connected AI assistant cancels, paid invoices are left as they are and the business is emailed to review and issue the refund in Vremly. Moving to DELIVERED releases the order and emails the customer, so a connected AI assistant is refused (403 CONNECTOR_USE_REVIEWED_DELIVERY) and delivers through POST /agent-actions/delivery/{projectId}/preview and /confirm instead.",
         "operationId": "ProjectsController_updateStatus",
         "parameters": [
           {
@@ -10227,7 +10298,7 @@
     },
     "/projects/{id}/stage": {
       "patch": {
-        "description": "Use GET /pipeline/stages to find stage IDs. Applies the stage status and configured on-drop triggers. A stage mapped to CANCELLED runs the same cancellation as POST /projects/{id}/cancel: invoices already paid by card are refunded automatically only when a person signed in to Vremly makes the move; when an API key or a connected AI assistant does, paid invoices are left as they are and the business is emailed to review and issue the refund in Vremly.",
+        "description": "Use GET /pipeline/stages to find stage IDs. Applies the stage status and configured on-drop triggers. A stage mapped to CANCELLED runs the same cancellation as POST /projects/{id}/cancel: invoices already paid by card are refunded automatically only when a person signed in to Vremly makes the move; when an API key or a connected AI assistant does, paid invoices are left as they are and the business is emailed to review and issue the refund in Vremly. A stage mapped to DELIVERED releases the order and emails the customer, so a connected AI assistant is refused (403 CONNECTOR_USE_REVIEWED_DELIVERY) and delivers through POST /agent-actions/delivery/{projectId}/preview and /confirm instead.",
         "operationId": "ProjectsController_moveToStage",
         "parameters": [
           {
@@ -10353,6 +10424,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetTechnicianWorkflowDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -10457,6 +10538,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetProjectShowcaseDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -10502,6 +10593,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPaywallBypassDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -10702,6 +10803,7 @@
     },
     "/projects/{id}/delivery/resend-email": {
       "post": {
+        "description": "A connected AI assistant is refused here (403 CONNECTOR_USE_REVIEWED_DELIVERY): it previews the resend with POST /agent-actions/followup/{projectId}/preview and, once the person approves, sends it with POST /agent-actions/followup/{projectId}/confirm.",
         "operationId": "ProjectsController_resendDeliveryEmail",
         "parameters": [
           {
@@ -10764,6 +10866,7 @@
     },
     "/projects/{id}/delivery/enable": {
       "post": {
+        "description": "A connected AI assistant is refused here (403 CONNECTOR_USE_REVIEWED_DELIVERY): it previews the release and the customer email with POST /agent-actions/delivery/{projectId}/preview and, once the person approves, delivers with POST /agent-actions/delivery/{projectId}/confirm.",
         "operationId": "ProjectsController_enableDelivery",
         "parameters": [
           {
@@ -12757,6 +12860,16 @@
       "patch": {
         "operationId": "MediaController_reorderMedia",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderMediaDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -12802,6 +12915,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameMediaDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -16054,6 +16177,304 @@
         ]
       }
     },
+    "/customers/{id}/teams": {
+      "get": {
+        "operationId": "CustomersController_getCustomerTeams",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "List a customer's teams and team rosters",
+        "tags": [
+          "Customers"
+        ],
+        "x-vremly-required-scopes": [
+          "READ",
+          "ADMIN"
+        ]
+      },
+      "post": {
+        "operationId": "CustomersController_createCustomerTeam",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTeamDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Create an agent team for a linked customer during onboarding",
+        "tags": [
+          "Customers"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/customers/{id}/teams/{teamId}/members": {
+      "post": {
+        "operationId": "CustomersController_addCustomerTeamMember",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "teamId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTeamMemberDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Add a member to a linked customer's team",
+        "tags": [
+          "Customers"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/customers/{id}/teams/{teamId}/members/{memberUserId}": {
+      "patch": {
+        "operationId": "CustomersController_updateCustomerTeamMemberRole",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "teamId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "memberUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTeamMemberRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Change a member's role on a linked customer's team",
+        "tags": [
+          "Customers"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
+          "ADMIN"
+        ]
+      },
+      "delete": {
+        "operationId": "CustomersController_removeCustomerTeamMember",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "teamId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "memberUserId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Remove a member from a linked customer's team",
+        "tags": [
+          "Customers"
+        ],
+        "x-vremly-required-scopes": [
+          "WRITE",
+          "ADMIN"
+        ]
+      }
+    },
     "/customers/{id}/sessions": {
       "get": {
         "operationId": "CustomersController_listSessions",
@@ -17235,7 +17656,7 @@
     },
     "/orders/create": {
       "post": {
-        "description": "Who calls it: the Vremly apps, and integrations that already have the person’s approval. Assistants should prefer POST /agent-actions/booking/preview then /confirm, which show the person the exact quote and slot first. With providerOrgId you order from that provider as its customer; without it you book inside your own organisation for customerId or newCustomer (needs permission to create orders). When the provider takes payment up front the response is { requiresPayment: true, checkoutUrl } and the person pays on Stripe’s page. A card is never charged here. With an API key a card-on-file requirement comes back as cardOnFileRequired: true instead of card-collection secrets. Next step: follow GET /projects/{id}.",
+        "description": "Who calls it: the Vremly apps, and integrations that already have the person’s approval. Assistants should prefer POST /agent-actions/booking/preview then /confirm, which show the person the exact quote and slot first. With providerOrgId you order from that provider as its customer; without it you book inside your own organisation for customerId or newCustomer (needs permission to create orders). When the provider takes payment up front the response is { requiresPayment: true, checkoutUrl } and the person pays on Stripe’s page. A card is never charged here. With an API key a card-on-file requirement comes back as cardOnFileRequired: true instead of card-collection secrets. A connected AI assistant is refused (403 AGENT_BOOKING_NEEDS_PREVIEW): it books with POST /agent-actions/booking/preview then /confirm. An API key books only within the spending limits the person set for it; over them it gets 403 SPEND_LIMIT_NEEDS_APPROVAL and should use /agent-actions/booking/confirm, which holds the booking for the person to approve. Next step: follow GET /projects/{id}.",
         "operationId": "OrdersController_createOrder",
         "parameters": [],
         "requestBody": {
@@ -18949,7 +19370,7 @@
     },
     "/agent-actions/booking/confirm": {
       "post": {
-        "description": "Who calls it: the assistant, only after the person approved the preview’s quote and slot. Send the same order, its previewHash, confirmed: true and a new idempotencyKey (reuse it to retry safely; a reused key returns the first result). If anything changed since the preview it returns 409 and books nothing. It runs the app’s own booking flow: the order is created and the provider is notified, or, when the provider takes payment up front, result.requiresPayment is true with result.checkoutUrl. It never charges a card and never returns card-collection secrets. Next step: give checkoutUrl to the person to pay; otherwise follow GET /projects/{id} and the PROJECT_STATUS_CHANGED, PROJECT_DELIVERED and SHARE_CARD_READY webhooks.",
+        "description": "Who calls it: the assistant, only after the person approved the preview’s quote and slot. Send the same order, its previewHash, confirmed: true and a new idempotencyKey (reuse it to retry safely; a reused key returns the first result). If anything changed since the preview it returns 409 and books nothing. A total over the spending limit the person set for your key is not booked: the answer is status NEEDS_APPROVAL with approval (approvalUrl for the person) and the booking waits for them in the Vremly app; follow it with GET /agent-actions/approvals/{id}. It runs the app’s own booking flow: the order is created and the provider is notified, or, when the provider takes payment up front, result.requiresPayment is true with result.checkoutUrl. It never charges a card and never returns card-collection secrets. Next step: give checkoutUrl to the person to pay; otherwise follow GET /projects/{id} and the PROJECT_STATUS_CHANGED, PROJECT_DELIVERED and SHARE_CARD_READY webhooks.",
         "operationId": "AgentActionsController_bookingConfirm",
         "parameters": [],
         "requestBody": {
@@ -18964,7 +19385,14 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           },
           "401": {
             "description": "Missing or invalid JWT token"
@@ -19001,6 +19429,67 @@
         ],
         "x-vremly-required-scopes": [
           "WORKFLOWS_WRITE",
+          "ADMIN"
+        ]
+      }
+    },
+    "/agent-actions/approvals/{id}": {
+      "get": {
+        "description": "Who calls it: the assistant whose POST /agent-actions/booking/confirm answered status NEEDS_APPROVAL (approval.id). Only the key that asked can read it. status PENDING: still waiting for the person in the Vremly app (approvalUrl); do not confirm again. EXECUTED: the person approved it and it was booked; read the result with GET /agent-actions/booking/receipts/{receiptId}. DECLINED or EXPIRED: nothing was booked. FAILED: approved but not placed (failureReason, usually the price or slot changed); prepare a new preview if the person still wants it. The AGENT_APPROVAL_DECIDED webhook announces every decision.",
+        "operationId": "AgentActionsController_bookingApproval",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentApprovalDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT token"
+          },
+          "403": {
+            "description": "Not a member of the specified organization"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "x-org-id": []
+          },
+          {
+            "x-api-key": []
+          }
+        ],
+        "summary": "Check whether the person approved a booking that was over your spending limit; changes nothing",
+        "tags": [
+          "Agent Actions"
+        ],
+        "x-agent-intents": [
+          "is my booking approved",
+          "check the approval",
+          "approval status",
+          "booking approval status",
+          "waiting for approval",
+          "spending limit approval"
+        ],
+        "x-vremly-required-scopes": [
+          "WORKFLOWS_READ",
           "ADMIN"
         ]
       }
@@ -22865,129 +23354,6 @@
         ],
         "x-vremly-required-scopes": [
           "READ",
-          "ADMIN"
-        ]
-      }
-    },
-    "/api-keys": {
-      "post": {
-        "operationId": "ApiKeysController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateApiKeyDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "Create a new API key",
-        "tags": [
-          "API Keys"
-        ],
-        "x-vremly-required-scopes": [
-          "ADMIN"
-        ]
-      },
-      "get": {
-        "operationId": "ApiKeysController_list",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "List all active API keys for organization",
-        "tags": [
-          "API Keys"
-        ],
-        "x-vremly-required-scopes": [
-          "READ",
-          "ADMIN"
-        ]
-      }
-    },
-    "/api-keys/{id}": {
-      "delete": {
-        "operationId": "ApiKeysController_revoke",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          },
-          "401": {
-            "description": "Missing or invalid JWT token"
-          },
-          "403": {
-            "description": "Not a member of the specified organization"
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          },
-          {
-            "x-org-id": []
-          },
-          {
-            "x-api-key": []
-          }
-        ],
-        "summary": "Revoke an API key",
-        "tags": [
-          "API Keys"
-        ],
-        "x-vremly-required-scopes": [
           "ADMIN"
         ]
       }
@@ -31638,10 +32004,6 @@
       "description": "Invoice management"
     },
     {
-      "name": "API Keys",
-      "description": "Issuing and revoking organization API keys"
-    },
-    {
       "name": "Listings",
       "description": "Property websites, listing details, photo order and leads"
     },
@@ -31723,6 +32085,18 @@
           "interval": {
             "type": "object",
             "description": "Billing interval. Only meaningful for TEAM, which is sold at two prices;\nENTERPRISE has a single configured price and ignores this.",
+            "enum": [
+              "monthly",
+              "yearly"
+            ]
+          }
+        }
+      },
+      "MoveFromAppStoreDto": {
+        "type": "object",
+        "properties": {
+          "interval": {
+            "type": "object",
             "enum": [
               "monthly",
               "yearly"
@@ -31900,6 +32274,10 @@
           "customerId": {
             "type": "string",
             "description": "CUSTOMER_EMAIL_UNDELIVERABLE: the OrganizationCustomer whose address can't\nreceive mail. The row's destination is that customer's page — the place\nthe address gets fixed — and for every org except the one whose send\nbounced the row has no projectId at all, so this is what makes it tappable."
+          },
+          "agentApprovalId": {
+            "type": "string",
+            "description": "AGENT_APPROVAL_REQUESTED: the AgentSpend an agent is waiting on. The\nbooking does not exist yet, so the row has no projectId; this is its\ndestination — `/agent-approvals/<agentApprovalId>` on web, the approval\nsheet on iOS — where the person approves or declines it."
           }
         },
         "required": [
@@ -32241,6 +32619,10 @@
               "type": "object"
             }
           },
+          "onboardingAnswers": {
+            "type": "object",
+            "description": "Whitelisted non-sensitive answers from the signup wizard."
+          },
           "companyAccessCode": {
             "type": "string",
             "maxLength": 120
@@ -32321,7 +32703,8 @@
           },
           "turnstileToken": {
             "type": "string",
-            "description": "Cloudflare Turnstile widget token (common/turnstile.ts). Optional field\nso the route keeps working before a frontend widget sends one — the\nverify call is a no-op until TURNSTILE_SECRET_KEY is configured, so an\nabsent token is never itself a rejection reason while that's true."
+            "description": "Cloudflare Turnstile widget token (common/turnstile.ts). Optional field\nso the route keeps working before a frontend widget sends one — the\nverify call is a no-op until TURNSTILE_SECRET_KEY is configured, so an\nabsent token is never itself a rejection reason while that's true.",
+            "maxLength": 2048
           }
         },
         "required": [
@@ -34558,16 +34941,17 @@
           "CUSTOMER_UPDATED",
           "SHARE_CARD_READY",
           "PROJECT_RESCHEDULED",
-          "TRIP_STATUS_CHANGED"
+          "TRIP_STATUS_CHANGED",
+          "AGENT_APPROVAL_DECIDED"
         ],
-        "description": "The events to deliver to url. Each delivery is a signed POST of { id, event, timestamp, data }, where data is that event's payload. PROJECT_STATUS_CHANGED, PROJECT_DELIVERED, PROJECT_RESCHEDULED, TRIP_STATUS_CHANGED and PROJECT_ASSIGNED follow a shoot; SHARE_CARD_READY is sent to the personal workspace of the agent whose Just listed card is ready; INVOICE_SENT and INVOICE_PAID follow billing."
+        "description": "The events to deliver to url. Each delivery is a signed POST of { id, event, timestamp, data }, where data is that event's payload. PROJECT_STATUS_CHANGED, PROJECT_DELIVERED, PROJECT_RESCHEDULED, TRIP_STATUS_CHANGED and PROJECT_ASSIGNED follow a shoot; SHARE_CARD_READY is sent to the personal workspace of the agent whose Just listed card is ready; INVOICE_SENT and INVOICE_PAID follow billing; AGENT_APPROVAL_DECIDED is sent to the workspace of an API key or assistant whose over-limit booking was decided (status EXECUTED, FAILED, DECLINED or EXPIRED), with data { event, occurredAt, orgId, approval: { id, status, kind, amountCents, currency, projectId, receiptId, failureReason }, apiPath }."
       },
       "CreateWebhookSubscriptionDto": {
         "type": "object",
         "properties": {
           "events": {
             "type": "array",
-            "description": "The events to deliver to url. Each delivery is a signed POST of { id, event, timestamp, data }, where data is that event's payload. PROJECT_STATUS_CHANGED, PROJECT_DELIVERED, PROJECT_RESCHEDULED, TRIP_STATUS_CHANGED and PROJECT_ASSIGNED follow a shoot; SHARE_CARD_READY is sent to the personal workspace of the agent whose Just listed card is ready; INVOICE_SENT and INVOICE_PAID follow billing.",
+            "description": "The events to deliver to url. Each delivery is a signed POST of { id, event, timestamp, data }, where data is that event's payload. PROJECT_STATUS_CHANGED, PROJECT_DELIVERED, PROJECT_RESCHEDULED, TRIP_STATUS_CHANGED and PROJECT_ASSIGNED follow a shoot; SHARE_CARD_READY is sent to the personal workspace of the agent whose Just listed card is ready; INVOICE_SENT and INVOICE_PAID follow billing; AGENT_APPROVAL_DECIDED is sent to the workspace of an API key or assistant whose over-limit booking was decided (status EXECUTED, FAILED, DECLINED or EXPIRED), with data { event, occurredAt, orgId, approval: { id, status, kind, amountCents, currency, projectId, receiptId, failureReason }, apiPath }.",
             "items": {
               "$ref": "#/components/schemas/WebhookEventType"
             }
@@ -34600,6 +34984,56 @@
             "type": "boolean"
           }
         }
+      },
+      "CreateAppStorePurchaseIntentDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "description": "One of the Teams ladder's product ids (`GET /app-store/products`).",
+            "enum": [
+              "com.vremly.teams.10.yearly",
+              "com.vremly.teams.10.monthly",
+              "com.vremly.teams.5.yearly",
+              "com.vremly.teams.5.monthly",
+              "com.vremly.teams.3.yearly",
+              "com.vremly.teams.3.monthly",
+              "com.vremly.teams.seat.monthly",
+              "com.vremly.teams.seat.yearly"
+            ]
+          },
+          "appTransactionId": {
+            "type": "string",
+            "description": "StoreKit `AppTransaction.shared.appTransactionID`. Apple's\nintroductory-offer eligibility signature must name a transaction of the\ncustomer's, and the app transaction exists even before any purchase.",
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "productId",
+          "appTransactionId"
+        ]
+      },
+      "RecordAppStoreTransactionDto": {
+        "type": "object",
+        "properties": {
+          "signedTransaction": {
+            "type": "string",
+            "description": "The transaction's compact JWS, exactly as StoreKit produced it.",
+            "maxLength": 20000
+          },
+          "restore": {
+            "type": "boolean",
+            "description": "True only from an explicit Restore Purchases."
+          },
+          "restoreToOrgId": {
+            "type": "string",
+            "description": "The workspace open on the device. Read ONLY for a transaction that carries\nno account token, posted with `restore: true`.",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "signedTransaction"
+        ]
       },
       "CreateTimeOffRequestDto": {
         "type": "object",
@@ -34841,6 +35275,10 @@
             "description": "Free-text detail, meaningful when `acquisitionSource` is \"OTHER\".",
             "maxLength": 120
           },
+          "onboardingAnswers": {
+            "type": "object",
+            "description": "Answers from the account-creation wizard. Stored separately from User so\nthey are not disclosed by ordinary profile/admin user responses."
+          },
           "birthdayMonth": {
             "type": "number",
             "nullable": true,
@@ -35005,6 +35443,19 @@
           }
         }
       },
+      "CreateTeamsWorkspaceDto": {
+        "type": "object",
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "companyName"
+        ]
+      },
       "SwitchAccountTypeDto": {
         "type": "object",
         "properties": {
@@ -35124,6 +35575,20 @@
           }
         }
       },
+      "AttachScanResultsDto": {
+        "type": "object",
+        "properties": {
+          "propertyId": {
+            "type": "string"
+          },
+          "tourViewerUrl": {
+            "type": "string"
+          },
+          "floorPlanImages": {
+            "type": "boolean"
+          }
+        }
+      },
       "CreateProjectMediaDto": {
         "type": "object",
         "properties": {
@@ -35145,6 +35610,9 @@
           "type": {
             "type": "string",
             "description": "The media type CODE this file belongs to. See `GET /media-types` for the\norganization's vocabulary — the built-ins plus any `CUSTOM_…` type it\ncreated.\n\n⚠️ `@IsString()` and NOT `@IsEnum(MediaType)`. A validation decorator is\nevaluated ONCE at class-definition time, with no request and no\norganization in scope, so it cannot know which codes this org defined — and\nunder `forbidNonWhitelisted: true` an `@IsEnum` here would 400 a\nphotographer uploading into a lane the org itself created.\n\nThe check is not removed, it MOVED to where the org is known:\n`MediaService.normalizeMediaType` resolves the org's registry and refuses a\ncode outside it, naming the acceptable ones. Every path that reaches a\n`Media` row from this DTO (`POST /projects/:id/media` and\n`POST /media/confirm-upload`, which extends this class) funnels through\n`createMediaForProject`, which calls it."
+          },
+          "deliveryGroupCode": {
+            "type": "string"
           },
           "isRawUpload": {
             "type": "boolean"
@@ -35396,6 +35864,17 @@
           }
         }
       },
+      "UpdateProjectNotesDto": {
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "notes"
+        ]
+      },
       "UpdateProjectDto": {
         "type": "object",
         "properties": {
@@ -35504,38 +35983,88 @@
           "projectIds"
         ]
       },
-      "AssignTechnicianDto": {
+      "AssignTechnicianBodyDto": {
         "type": "object",
         "properties": {
           "technicianId": {
             "type": "string",
-            "description": "The user id of the technician to put on the job. They must be an enabled service provider in this organization.",
-            "example": "cmk3x9q2a0001s601abcd1234"
-          },
-          "override": {
-            "type": "boolean",
-            "description": "Confirm the assignment despite a conflict (409) reported by a previous call. Ignored unless the caller may override assignments."
+            "pattern": "\\S"
           },
           "bulkBatchId": {
-            "type": "string",
-            "description": "Bulk-assign rollup id. Pass the same value on every call in one bulk action so the technician is notified once for the batch. Omit it for a single assignment."
+            "type": "string"
+          },
+          "override": {
+            "type": "boolean"
           }
         },
         "required": [
           "technicianId"
         ]
       },
-      "AgentRequestTechnicianDto": {
+      "AssignCustomerBodyDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "mode": {
+            "type": "object"
+          },
+          "bulkBatchId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "customerId"
+        ]
+      },
+      "AssignProjectManagerBodyDto": {
+        "type": "object",
+        "properties": {
+          "projectManagerId": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "bulkBatchId": {
+            "type": "string"
+          },
+          "override": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "projectManagerId"
+        ]
+      },
+      "RequestTechnicianDto": {
         "type": "object",
         "properties": {
           "technicianId": {
             "type": "string",
-            "description": "The technician to request. Must be one returned by GET /projects/{id}/agent-past-technicians.",
-            "example": "cmk3x9q2a0001s601abcd1234"
+            "pattern": "\\S"
           }
         },
         "required": [
           "technicianId"
+        ]
+      },
+      "AssignEditorBodyDto": {
+        "type": "object",
+        "properties": {
+          "editorId": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "bulkBatchId": {
+            "type": "string"
+          },
+          "override": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "editorId"
         ]
       },
       "BulkSetEditorsDto": {
@@ -35604,6 +36133,39 @@
         },
         "required": [
           "stageId"
+        ]
+      },
+      "SetTechnicianWorkflowDto": {
+        "type": "object",
+        "properties": {
+          "reviewed": {
+            "type": "boolean"
+          },
+          "onSite": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SetProjectShowcaseDto": {
+        "type": "object",
+        "properties": {
+          "showcase": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "showcase"
+        ]
+      },
+      "SetPaywallBypassDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
         ]
       },
       "EmailSuppressionHealthDto": {
@@ -36113,6 +36675,18 @@
           }
         }
       },
+      "UpdateTeamMemberRoleDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "object",
+            "description": "Team owners and admins can grant MEMBER or ADMIN standing."
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
       "TransferTeamOwnershipDto": {
         "type": "object",
         "properties": {
@@ -36407,6 +36981,9 @@
           },
           "mediaType": {
             "type": "string"
+          },
+          "deliveryGroupCode": {
+            "type": "string"
           }
         },
         "required": [
@@ -36459,6 +37036,9 @@
             "type": "string",
             "description": "The media type CODE this file belongs to. See `GET /media-types` for the\norganization's vocabulary — the built-ins plus any `CUSTOM_…` type it\ncreated.\n\n⚠️ `@IsString()` and NOT `@IsEnum(MediaType)`. A validation decorator is\nevaluated ONCE at class-definition time, with no request and no\norganization in scope, so it cannot know which codes this org defined — and\nunder `forbidNonWhitelisted: true` an `@IsEnum` here would 400 a\nphotographer uploading into a lane the org itself created.\n\nThe check is not removed, it MOVED to where the org is known:\n`MediaService.normalizeMediaType` resolves the org's registry and refuses a\ncode outside it, naming the acceptable ones. Every path that reaches a\n`Media` row from this DTO (`POST /projects/:id/media` and\n`POST /media/confirm-upload`, which extends this class) funnels through\n`createMediaForProject`, which calls it."
           },
+          "deliveryGroupCode": {
+            "type": "string"
+          },
           "isRawUpload": {
             "type": "boolean"
           },
@@ -36495,6 +37075,49 @@
         "required": [
           "projectId",
           "mediaIds"
+        ]
+      },
+      "ReorderMediaDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "mediaIds": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "projectId",
+          "mediaIds"
+        ]
+      },
+      "RenameMediaDto": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "filename"
+        ]
+      },
+      "SetMediaShowcaseDto": {
+        "type": "object",
+        "properties": {
+          "showcase": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "showcase"
         ]
       },
       "IndexMediaContentDto": {
@@ -40763,6 +41386,211 @@
           "confirmed"
         ]
       },
+      "AgentApprovalPersonDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "AgentApprovalSummaryDto": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "description": "The property address."
+          },
+          "scheduledTime": {
+            "type": "string",
+            "nullable": true,
+            "description": "The shoot time (ISO 8601), or null when the provider schedules it."
+          },
+          "schedulingMode": {
+            "type": "string",
+            "nullable": true,
+            "description": "'scheduled' or 'requested'."
+          },
+          "providerName": {
+            "type": "string",
+            "nullable": true,
+            "description": "The organisation the booking is placed with."
+          },
+          "services": {
+            "description": "The package and add-on names.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "address",
+          "scheduledTime",
+          "schedulingMode",
+          "providerName",
+          "services"
+        ]
+      },
+      "AgentApprovalDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "AUTO_APPROVED",
+              "PENDING",
+              "APPROVED",
+              "EXECUTED",
+              "DECLINED",
+              "EXPIRED",
+              "FAILED"
+            ],
+            "description": "AUTO_APPROVED: within the limits, placed straight away. PENDING: waiting for the person. APPROVED: approved, being placed. EXECUTED: placed after approval (receiptId set). DECLINED, EXPIRED: not placed. FAILED: approved but placing it failed (failureReason)."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "BOOKING"
+            ]
+          },
+          "amountCents": {
+            "type": "number",
+            "description": "The quoted total in the smallest currency unit."
+          },
+          "currency": {
+            "type": "string",
+            "description": "Lowercase ISO 4217 code, e.g. cad."
+          },
+          "holdReason": {
+            "type": "string",
+            "enum": [
+              "PER_BOOKING_LIMIT",
+              "MONTHLY_LIMIT",
+              "CURRENCY_MISMATCH"
+            ],
+            "nullable": true,
+            "description": "Why it waits for the person; null when it was within the limits."
+          },
+          "bookingLimitCents": {
+            "type": "number",
+            "nullable": true,
+            "description": "The per-booking limit when it was asked."
+          },
+          "monthlyLimitCents": {
+            "type": "number",
+            "nullable": true,
+            "description": "The monthly limit when it was asked."
+          },
+          "monthToDateCents": {
+            "type": "number",
+            "description": "What the key had spent this UTC month when it was asked."
+          },
+          "agentName": {
+            "type": "string",
+            "description": "The assistant or API key that asked, as the person knows it."
+          },
+          "actorKind": {
+            "type": "string",
+            "enum": [
+              "API_KEY",
+              "AI_ASSISTANT"
+            ]
+          },
+          "apiKeyId": {
+            "type": "string"
+          },
+          "requestedBy": {
+            "description": "The person the key acts for.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AgentApprovalPersonDto"
+              }
+            ]
+          },
+          "summary": {
+            "$ref": "#/components/schemas/AgentApprovalSummaryDto"
+          },
+          "projectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "receiptId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Read it with GET /agent-actions/booking/receipts/{id}."
+          },
+          "failureReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "decidedBy": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AgentApprovalPersonDto"
+              }
+            ]
+          },
+          "decidedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "executedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "After this the request expires unanswered."
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "approvalUrl": {
+            "type": "string",
+            "description": "Where the person approves or declines it in the Vremly app."
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "kind",
+          "amountCents",
+          "currency",
+          "holdReason",
+          "bookingLimitCents",
+          "monthlyLimitCents",
+          "monthToDateCents",
+          "agentName",
+          "actorKind",
+          "apiKeyId",
+          "requestedBy",
+          "summary",
+          "projectId",
+          "receiptId",
+          "failureReason",
+          "decidedBy",
+          "decidedAt",
+          "executedAt",
+          "expiresAt",
+          "createdAt",
+          "approvalUrl"
+        ]
+      },
       "DeliveryActionDto": {
         "type": "object",
         "properties": {
@@ -40960,6 +41788,62 @@
           "entities"
         ]
       },
+      "AgentApprovalListMetaDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "offset": {
+            "type": "number"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "total",
+          "limit",
+          "offset",
+          "hasMore"
+        ]
+      },
+      "AgentApprovalListDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentApprovalDto"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/AgentApprovalListMetaDto"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      },
+      "ApproveAgentSpendDto": {
+        "type": "object",
+        "properties": {
+          "allowUpToCents": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100000000,
+            "description": "Also raise this key's per-booking limit to this amount (in the approval's currency) so bookings like it go through on their own next time. Owners and admins only."
+          }
+        }
+      },
+      "DeclineAgentSpendDto": {
+        "type": "object",
+        "properties": {}
+      },
       "CommentDto": {
         "type": "object",
         "properties": {
@@ -41005,6 +41889,13 @@
         "properties": {
           "mediaTypes": {
             "description": "Filter download by media types",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mediaIds": {
+            "description": "Limit the ZIP to these delivered media IDs",
             "type": "array",
             "items": {
               "type": "string"
@@ -41204,6 +42095,40 @@
           "createdAt"
         ]
       },
+      "DeliveryGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "mediaTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sortOrder": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "label",
+          "icon",
+          "mediaTypes",
+          "sortOrder"
+        ]
+      },
       "DeliveryTeamMemberDto": {
         "type": "object",
         "properties": {
@@ -41376,6 +42301,13 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MediaDto"
+            }
+          },
+          "deliveryGroups": {
+            "description": "Selling organization’s delivery sections, independent of file media types.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeliveryGroupDto"
             }
           },
           "pendingDeliverables": {
@@ -42528,8 +43460,29 @@
       "CreateApiKeyDto": {
         "type": "object",
         "properties": {
+          "bookingSpendLimitCents": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 2147483647,
+            "description": "Bookings this key confirms above this amount (in cents) wait for a person to approve them in the Vremly app. 0 = every booking waits; null = no per-booking limit."
+          },
+          "monthlySpendLimitCents": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 2147483647,
+            "description": "A booking that would take this key past this total for the calendar month (UTC, in cents) waits for approval. null = no monthly limit."
+          },
+          "spendLimitCurrency": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}$",
+            "example": "cad",
+            "description": "ISO 4217 code the limits are in, stored lowercase. Defaults to the organization's currency when a limit is set. A quote in any other currency waits for approval rather than being converted."
+          },
           "scopes": {
             "type": "array",
+            "description": "What the key may do. READ reads the published API and WRITE also changes it; a WRITE key can read. The <DOMAIN>_READ / <DOMAIN>_WRITE scopes grant one business capability each (payroll, guided migrations, delivery…), and plain READ/WRITE do not include them. ADMIN satisfies every scope, including payroll, bulk import and webhooks, so grant it only to an integration you would trust with all of those. No key, ADMIN included, can list, create, change or revoke API keys, approve its own spending, or move money: a person does those signed in to Vremly.",
             "items": {
               "type": "string",
               "enum": [
@@ -42589,6 +43542,31 @@
           "scopes",
           "name"
         ]
+      },
+      "UpdateApiKeyLimitsDto": {
+        "type": "object",
+        "properties": {
+          "bookingSpendLimitCents": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 2147483647,
+            "description": "Bookings this key confirms above this amount (in cents) wait for a person to approve them in the Vremly app. 0 = every booking waits; null = no per-booking limit."
+          },
+          "monthlySpendLimitCents": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 2147483647,
+            "description": "A booking that would take this key past this total for the calendar month (UTC, in cents) waits for approval. null = no monthly limit."
+          },
+          "spendLimitCurrency": {
+            "type": "string",
+            "pattern": "^[A-Za-z]{3}$",
+            "example": "cad",
+            "description": "ISO 4217 code the limits are in, stored lowercase. Defaults to the organization's currency when a limit is set. A quote in any other currency waits for approval rather than being converted."
+          }
+        }
       },
       "ProfitabilityCustomerRefDto": {
         "type": "object",
@@ -43348,10 +44326,40 @@
             "enum": [
               "QUICKBOOKS"
             ]
+          },
+          "approvalToken": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]{40,2000}$"
           }
         },
         "required": [
-          "provider"
+          "provider",
+          "approvalToken"
+        ]
+      },
+      "ApproveQuickBooksExportDto": {
+        "type": "object",
+        "properties": {
+          "payloadHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "payloadHash"
+        ]
+      },
+      "ReconcileQuickBooksBillDto": {
+        "type": "object",
+        "properties": {
+          "billId": {
+            "type": "string",
+            "description": "QuickBooks entity IDs are numeric strings.",
+            "pattern": "^\\d{1,30}$"
+          }
+        },
+        "required": [
+          "billId"
         ]
       },
       "QuickBooksCallbackDto": {
@@ -43688,6 +44696,10 @@
       "DeliverTourSpotDto": {
         "type": "object",
         "properties": {
+          "hidden": {
+            "type": "boolean",
+            "description": "Retained as a drafting reference, excluded from the public tour."
+          },
           "filename": {
             "type": "string",
             "description": "The item (by `filename`) holding this spot's pano.",
@@ -44118,6 +45130,10 @@
       "CreateTourNodeDto": {
         "type": "object",
         "properties": {
+          "hidden": {
+            "type": "boolean",
+            "description": "Retained as a drafting reference, excluded from the public tour."
+          },
           "label": {
             "type": "string"
           },
@@ -44263,6 +45279,10 @@
       "PublishJobSpotDto": {
         "type": "object",
         "properties": {
+          "hidden": {
+            "type": "boolean",
+            "description": "Retained as a drafting reference, excluded from the public tour."
+          },
           "label": {
             "type": "string"
           },
@@ -47518,6 +48538,22 @@
             "type": "string"
           }
         }
+      },
+      "ReplaceDeliveryGroupsDto": {
+        "type": "object",
+        "properties": {
+          "groups": {
+            "minItems": 1,
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeliveryGroupDto"
+            }
+          }
+        },
+        "required": [
+          "groups"
+        ]
       },
       "CreateOrgMediaTypeDto": {
         "type": "object",
