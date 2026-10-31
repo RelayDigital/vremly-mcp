@@ -1,11 +1,12 @@
 /**
  * Loading, searching and describing the Vremly OpenAPI document.
  *
- * The document has ~854 paths. That number is why this server does NOT expose
- * one MCP tool per operation: a tool list that large is unusable — it would
- * cost more context to enumerate than most tasks cost to perform, and many
- * clients cap the tool count outright. Instead capability discovery and three tools (search, describe,
- * request) give complete coverage of every route at a fixed context cost.
+ * The public document has hundreds of paths (516 on 2026-10-30). That is why
+ * this server does NOT expose one MCP tool per operation: a tool list that
+ * large is unusable — it would cost more context to enumerate than most tasks
+ * cost to perform, and many clients cap the tool count outright. Instead four
+ * tools (capabilities, search, describe, request) give complete coverage of
+ * every route at a fixed context cost.
  */
 
 import { readFileSync, existsSync } from 'node:fs';

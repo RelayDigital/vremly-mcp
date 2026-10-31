@@ -295,6 +295,46 @@ export function rankOperations<T extends SearchableOperation>(
         o.intents.some((i) => i.terms.some((w) => sameIntentWord(term, w))),
     ),
   );
+  const ranked = rankTerms(index, terms);
+  if (ranked.length > 0 || terms.length < 2) return ranked;
+
+  // ── NOTHING RANKED: FALL BACK, NEVER REPLACE ────────────────────────────
+  // A word known only from phrases (never from any operation's own path,
+  // summary, operationId or tags) counts in every operation's share of the
+  // query, so two such words that no single phrase holds together ("pro
+  // photographer", "mover photographer") left every operation below the bar,
+  // where each word alone found something. Drop those words one at a time,
+  // the one the most phrases hold first (the weakest evidence, the ranker's
+  // own rarity rule; counted on the exact word, since a typo-tolerant count
+  // would credit "photographer" with every "photography"), until something
+  // ranks. Runs only when the full query found nothing, so it can only add
+  // results.
+  const phraseOnly = terms
+    .filter((term) => !index.operations.some((o) => o.words.some((w) => sameWord(term, w))))
+    .map((term, at) => ({
+      term,
+      at,
+      holders: index.operations.reduce(
+        (n, o) => n + o.intents.filter((i) => i.terms.some((w) => sameWord(term, w))).length,
+        0,
+      ),
+    }))
+    .sort((a, b) => b.holders - a.holders || b.at - a.at);
+  let kept = terms;
+  for (const { term } of phraseOnly) {
+    kept = kept.filter((t) => t !== term);
+    if (kept.length === 0) break;
+    const fallback = rankTerms(index, kept);
+    if (fallback.length > 0) return fallback;
+  }
+  return [];
+}
+
+/** {@link rankOperations} for an already filtered list of query words. */
+function rankTerms<T extends SearchableOperation>(
+  index: SearchIndex<T>,
+  terms: string[],
+): RankedOperation<T>[] {
   if (terms.length === 0) return [];
 
   const total = index.operations.length;

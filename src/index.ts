@@ -5,16 +5,23 @@
  * Exposes the Vremly REST API to an AI agent over the Model Context Protocol,
  * on stdio.
  *
- * ── WHY THREE TOOLS AND NOT 854 ─────────────────────────────────────────────
+ * ── WHY FOUR TOOLS AND NOT ONE PER OPERATION ───────────────────────────────
  *
  * The obvious design is one tool per operation, generated from the OpenAPI
- * document. The document has 854 paths. Enumerating them costs more context
- * than most tasks are worth, and many hosts cap the tool count anyway.
+ * document. The public document has hundreds of paths (516 paths and 625
+ * operations on 2026-10-30). Enumerating them costs more context than most
+ * tasks are worth, and many hosts cap the tool count anyway.
  *
- * So instead: search to find the endpoint, describe to learn its shape, and
- * request to call it. Three tools, complete coverage, fixed context cost — and
- * no generated tool list to fall out of date, because the search reads the
- * document directly.
+ * So instead: capabilities to see what this key may do, search to find the
+ * endpoint, describe to learn its shape, and request to call it. Four tools,
+ * complete coverage, fixed context cost — and no generated tool list to fall
+ * out of date, because the search reads the document directly.
+ *
+ * The descriptions are neutral ("jobs", "your pro"): this server is the same
+ * for every business that installs it and knows nothing about the org until a
+ * request is made, while the API serves real-estate media, inspection, trades,
+ * moving and other home services alike. The search phrases themselves come
+ * from the published document (`x-agent-intents`), in every industry's words.
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -75,7 +82,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       name: 'vremly_search_endpoints',
       description:
         `Search the Vremly API for endpoints by keyword. The API has ${OPERATION_COUNT} ` +
-        'operations covering projects (shoots), customers, media and delivery, ' +
+        'operations covering jobs (projects), customers, files and delivery, ' +
         'invoicing, scheduling, the marketplace and webhooks. Start here when ' +
         'you do not already know the exact path. Returns method, path, summary ' +
         'and tags — pass a result to vremly_describe_endpoint for its full shape.',
@@ -85,7 +92,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           query: {
             type: 'string',
             description:
-              'What the person wants, in their words or the API\'s, e.g. "book a shoot", "where is my photographer", "invoice pdf".',
+              'What the person wants, in their words or the API\'s, e.g. "book a visit", "where is my pro", "invoice pdf".',
           },
           method: {
             type: 'string',
@@ -199,7 +206,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         if (results.length === 0) {
           return textResult(
             `No endpoint matched "${args.query}". Try the words a person would ` +
-              'use ("book a shoot", "pay invoice") or one broad word such as "project", "invoice" or "webhook".',
+              'use ("book a visit", "pay invoice") or one broad word such as "project", "invoice" or "webhook".',
           );
         }
         return textResult({ count: results.length, results });
